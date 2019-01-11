@@ -1,0 +1,7 @@
+ewz_recaptcha:
+#  public_key:  6LeaS3YUAAAAAOfJlITchWRN2kgTrPFf5Zc8bysk
+  public_key:  '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+#  private_key:  6LeaS3YUAAAAAOovb-O0mqiDErTs6rM8x5CmTZRg
+  private_key:  '%env(GOOGLE_RECAPTCHA_SECRET)%'
+  # Not needed as "%kernel.default_locale%" is the default value for the locale key
+  locale_key:  '%kernel.default_locale%'

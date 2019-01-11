@@ -1,0 +1,81 @@
+{% extends "base.html.twig" %}
+        {% block alerts %}
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <div class="alert alert-danger">
+            <h4 class="alert-heading">The login form can not be displayed</h4>
+            You are already logged in as <b> {{ app.user.username }} </b>!<br>
+            Return to the
+            <a class="link-custom alert-link" style="color: #491217;" onmouseover="this.style.textDecoration='underline';"
+               onmouseout="this.style.textDecoration='none';" onclick="window.history.go(-1); return false;">previous page</a>
+            or go to the <a class="alert-link" href="/">homepage</a>.
+            <hr>
+            If you want to log in, you have to <a class="alert-link" href="/logout">logout</a> first.
+        </div>
+            {% endif %}
+        {% endblock %}
+
+        {% block body %}
+{% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+    {% if error %}
+        <div class="row justify-content-center px-3 px-lg-4">
+        <div class="col-md-8 alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        </div>
+    {% endif %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card-group">
+                <div class="card p-4">
+                    <div class="card-body">
+                        <h1>Login</h1>
+                        <p class="text-muted">Sign In to your account</p>
+
+                        <form action="{{ path('login') }}" method="post">
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="fas fa-user" style="width: 15px;"></i>
+                    </span>
+                            </div>
+                            <input class="form-control" type="text" placeholder="Username" name="_username" value="{{ last_username }}">
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="fas fa-key"></i>
+                    </span>
+                            </div>
+                            <input class="form-control" type="password" placeholder="Password" name="_password">
+                        </div>
+
+                            <div class="custom-control custom-checkbox mb-2">
+                                <input type="checkbox" class="custom-control-input" id="remember_me" name="_remember_me" checked/>
+                                <label class="custom-control-label" for="remember_me">Remember me</label>
+                            </div>
+
+
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn btn-primary px-4" type="submit">Login</button>
+                            </div>
+                            <div class="col-6 text-right">
+                                <a href="{{ url('resetPassword') }}" {#class="btn btn-link px-0" type="button"#}>Forgot password?</a>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="d-none d-lg-block card text-white bg-primary py-5 d-md-down-none" style="width:44%">
+                    <div class="card-body text-center">
+                        <div>
+                            <h2>Sign up</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                            <a href="{{ url('register') }}" class="btn btn-primary active mt-3" type="button">Register Now!</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            {% endif %}
+        {% endblock %}

@@ -1,0 +1,278 @@
+{% extends "base.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/search.css') }}">
+{% endblock %}
+{% block body %}
+    </main>
+    <div class="p-0 m-0">
+    <div class="col-lg-10 mx-auto p-0 my-0">
+
+    <div class="row m-0 p-0 mb-2">
+        <div class="col-12 col-sm-4">
+            <h3 class="ml-3 text-sm-right">Search for </h3>
+        </div>
+        <div class="col-12 col-sm-7">
+            <form method="get" action="\search">
+                <div class="input-group md-form form-sm form-2 pl-0">
+                    <input class="form-control form-control-lg my-0 py-1 red-border" type="text" name="s" value="{{ slug }}" placeholder="Season..." aria-label="Search">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary input-group-text"><i class="fas fa-search"></i>  Search</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <div style="clear: both"></div>
+
+    <div class="block mx-15 mb-1"><h class="mb-0"> Returned
+    {% if search_in == 'all' %}
+    {{ users|length + titles|length }}
+    {% elseif search_in == 'users'%}
+            {{ users|length }}
+    {% elseif search_in == 'titles' %}
+     {{ titles|length }}
+    {% endif %}
+     matches.</h></div>
+   {# {% if users %}#}
+    <div class="mx-4">
+    {#{% if users or titles %}#}
+        <div class="row align-content-center">
+            <div class="col-md-9 p-0 m-0">
+            {% if search_in == 'users' or search_in == 'all' %}
+                <div class="block mr-md-1">
+                <h4 class="block-title">Users</h4>
+                <div class="row">
+
+                    {% for user in users %}
+                        <a class="col-sm-4 search-a m-0 mb-3" href="/profile/{{ user.username }}" title="{{ user.username }}">
+                            <div style="float: left" class="avatar-img-mini p-0 mr-3">
+                                {% if user.avatar == null %}
+                                <img class="av-search" src="{{ asset('img/avatars/default.png') }}"/>
+                                {% else %}
+                                <img class="av-search position-absolute" alt=""  src="{{ asset('uploads/avatars/' ~ user.avatar) }}"/>
+                                {% endif %}
+                            </div>
+                            {#<div style="overflow: hidden;">{{ user.username|length > 35 ? user.username|slice(0, 35) ~ '...' : user.username}}</div>#}
+                            <div style="overflow: hidden;">{{ user.username }}</div>
+                            <div class="text-muted">{{ user.creationdatetime }}</div>
+                        </a>
+                    {% endfor %}
+                    {% if not users %}
+                        <div class="ml-3">No users were found.</div>
+                    {% endif %}
+                </div>
+                </div>
+            {% endif %}
+
+                {% if search_in == 'titles' or search_in == 'all' %}
+                <div class="col-md-12 p-0 m-0">
+                <div class="block mr-md-1">
+                <h4 class="block-title">TV Series</h4>
+                <div class="row text-center align-content-center justify-content-center">
+                    {% for title in titles %}
+                        <div class="card m-2" style="width: 15rem;">
+                            <img
+                            {#onclick="function() {location.href = '{{ url('list',{slug: title.tconst}) }}';};"#}
+                            onclick="function temp(){location.href = '{{ url('list',{slug: title.tconst}) }}';} temp();"
+                            class="card-img-top posters cursor-pointer-custom" style="width: auto; height: 350px;"
+                            src="{{ asset('img/poster.jpg') }}" alt="" id="{{ title.tconst }}"
+                            data-toggle="tooltip" title="Go to watched episodes list"
+                            >
+                            <div class="card-body">
+
+                                <a class="text-primary" href="{{ url('list',{slug: title.tconst}) }}">
+                                    <h5 class="card-title" id="{{ title.title }}">{{ title.title }}</h5>
+                                    <p class="text-muted">{{ title.startYear }}{% if title.endYear != "N" %} - {{ title.endYear }}{% endif %}
+                                    <a class="text-primary" style="font-size:30px;" href="https://www.imdb.com/title/{{ title.tconst }}/"><i class="fab fa-imdb"></i></a>
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+                    {% if titlesPagin.haveToPaginate %}
+                        <hr>
+                        <div class="navigation text-center mx-auto align-content-center justify-content-center">
+                        {#routeName: 'searchPagin', routeParams: {'slug':slug , 'page':app.request.query.all }#}
+
+                        {#{{ pagerfanta(titlesPagin, 'twitter_bootstrap4_translated', {routeName: 'searchPagin', routeParams: app.request.query.all}) }}#}
+                        {{ pagerfanta(titlesPagin, 'twitter_bootstrap4', {
+                        routeName: 'searchPagin', routeParams: {'slug':slug , 'page':app.request.query.all|merge(app.request.attributes.get('_route_params')) }
+                        } ) }}
+                        </div>
+                    {% endif %}
+                    {% if not titles %}
+                        <div class="">No TV series were found.</div>
+                {% endif %}
+                </div>
+
+            </div>
+            {% endif %}
+
+            </div>
+
+            <div class="col-md-3 p-0 m-0">
+            <form method="get">
+                <div class="block mb-1">
+                <h5 class="block-title-m custom-red">Search in:</h5>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" id="in_all" name="in" value="all" onchange='this.form.submit();'>
+                        <label class="custom-control-label" for="in_all"><i class="fas fa-th"></i> All</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" id="in_users" name="in" value="users" onchange='this.form.submit();'>
+                        <label class="custom-control-label" for="in_users"><i class="fas fa-users "></i> Users</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" id="in_titles" name="in" value="titles" onchange='this.form.submit();'>
+                        <label class="custom-control-label" for="in_titles"><i class="fas fa-tv "></i> TV series</label>
+                    </div>
+
+
+            </div>
+                <div class="block mb-1">
+                 <h5 class="block-title-m custom-red">Sort:</h5>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" id="asc" name="s" value="ASC" onchange='this.form.submit();'>
+                        <label class="custom-control-label" for="asc"><i class="fas fa-arrow-up "></i> Ascending</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" id="desc" name="s" value="DESC" onchange='this.form.submit();'>
+                        <label class="custom-control-label" for="desc"><i class="fas fa-arrow-down "></i> Descending</label>
+                    </div>
+
+                </div>
+
+                  <div class="block mb-1">
+                 <h5 class="block-title-m custom-red">Sort by:</h5>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" id="date" name="b" value="date" onchange='this.form.submit();'>
+                        <label class="custom-control-label" for="date"><i class="fas fa-calendar"></i>&nbsp; Date</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" id="name" name="b" value="name" onchange='this.form.submit();'>
+                        <label class="custom-control-label" for="name"><i class="fas fa-ad"></i> Name</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" id="relevance" name="b" value="relevance" onchange='this.form.submit();'>
+                        <label class="custom-control-label" for="relevance"><i class="far fa-circle"></i> Relevance</label>
+                    </div>
+
+             </div>
+            </form>
+            </div>
+
+
+
+        </div>
+{#    {% else %}
+        <p>
+            Your search returned no matches.<br><br>
+
+            Suggestions:<br>
+
+        <ul>
+            <li>Try fewer keywords.</li>
+            <li>Try different keywords.</li>
+            <li>Try more general keywords.</li>
+        </ul>
+        </p>
+    {% endif %}#}
+    </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : sParameterName[1];
+                }
+            }
+        };
+        let sort = getUrlParameter('s');
+        if(sort=="ASC") $('#asc').attr('checked', true);
+        else{
+            $('#asc').attr('checked', false);
+            $('#desc').attr('checked', true);
+        }
+        let sortBy = getUrlParameter('b');
+        if(sortBy=="name"){
+            $('#name').attr('checked', true);
+            $('#date').attr('checked', false);
+            $('#relevance').attr('checked', false);
+        }
+        else if(sortBy=="date"){
+            $('#name').attr('checked', false);
+            $('#date').attr('checked', true);
+            $('#relevance').attr('checked', false);
+        }else{
+            $('#name').attr('checked', false);
+            $('#date').attr('checked', false);
+            $('#relevance').attr('checked', true);
+        }
+
+        //SEARCH IN
+        let search_in = getUrlParameter('in');
+        if(search_in==="titles"){
+            $('#in_all').attr('checked', false);
+            $('#in_users').attr('checked', false);
+            $('#in_titles').attr('checked', true);
+        }
+        else if(search_in==="users"){
+            $('#in_all').attr('checked', false);
+            $('#in_users').attr('checked', true);
+            $('#in_titles').attr('checked', false);
+        }else{
+            $('#in_all').attr('checked', true);
+            $('#in_users').attr('checked', false);
+            $('#in_titles').attr('checked', false);
+        }
+        // let users_checkbox = getUrlParameter('inusers');
+        /*if( getUrlParameter('inusers') === 'on'){
+            $('#users_checkbox').attr('checked', true);
+        }else{
+            if(document.getElementById('users_checkbox').hasAttribute('checked')){
+                $('#users_checkbox').attr('checked', true);
+            }
+            $('#users_checkbox').attr('checked', false);
+        }
+
+        if( getUrlParameter('intitles') === 'on'){
+            $('#titles_checkbox').attr('checked', true);
+        }else{
+            if(getUrlParameter('inusers') === undefined){
+                $('#titles_checkbox').attr('checked', true);
+            }
+            $('#titles_checkbox').attr('checked', false);
+        }*/
+
+
+
+        $(document).ready(function() {
+
+        let apikey = '3ffbff40';
+            $(".posters").get().forEach(function(entry, index, array) {
+                let tconst = $(entry).attr('id');
+                let url =  "https://www.omdbapi.com/?i="+tconst+"&apikey="+apikey;
+                $.getJSON( url, function( data ) {
+                   let img = data['Poster'];
+                   $(entry).attr('src',img);
+                   if ($(entry).attr('src')=='N/A') $(entry).attr('src','/img/poster.jpg');
+                })
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,11 @@
+<h3>Email Verification</h3>
+
+Hi {{ name }}!<br><br>
+
+Thanks for your registration. You can now <a href="{{ url('verify', {'slug': code}) }}">verify your email here</a>.<br>
+
+If it is not you, ignore this email.<br><br>
+
+Best regards,<br>
+
+{{ site_name }}

@@ -1,0 +1,92 @@
+{% extends "admin/baseadmin.html.twig" %}
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item">
+            <a href="\admin">Admin</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a href="\admin\users\">Users</a>
+        </li>
+    </ol>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">Users</div>
+                <div class="card-body">
+                    <table class="table table-responsive-sm table-bordered table-striped table-sm">
+                    {#<table class="table table-responsive-sm table-sm">#}
+                        <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Register Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.creationdatetime|date('Y-m-d H:i:s') }}</td>
+                            <td>
+                                {% if user.verified==1 %}
+                                    <span class="badge badge-pill badge-dark"><i class="fa fa-check"></i> Verified</span>
+                                {% else %}
+                                    <span class="badge badge-pill badge-danger">N/A</span>
+                                {% endif %}
+
+                                {% if user.roles|join=='ROLE_ADMIN' %}
+                                    <span class="badge badge-danger">Admin</span>
+                                {% elseif user.roles|join=='ROLE_MOD' %}
+                                    <span class="badge badge-warning">Moderator</span>
+                                {% else %}
+                                    <span class="badge badge-light">User</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn btn-primary" href="users/{{ user.id }}">
+                                    <i class="fa fa-search-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#">Prev</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">4</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+{#    <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+    <script src="node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js"></script>
+    <script src="js/main.js"></script>#}
+{% endblock %}

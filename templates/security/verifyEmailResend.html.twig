@@ -1,0 +1,9 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <h1>Email Verification</h1>
+    <p>Enter your email below. You will get email with verification link.</p>
+        {{ form_start(form) }}
+        {{ form_widget(form)}}
+        <button class="my-3 btn btn-primary" type="submit"><i class="fas fa-envelope"></i> Send</button>
+        {{ form_end(form) }}
+{% endblock %}

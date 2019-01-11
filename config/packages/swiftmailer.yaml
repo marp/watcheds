@@ -1,0 +1,31 @@
+#swiftmailer:
+#    url: '%env(MAILER_URL)%'
+#    spool: { type: 'memory' }
+#swiftmailer:
+#  transport:        smtp
+#  username:         szybkimail@o2.pl
+#  password:         1234567890
+#  host:             localhost
+#  port:             465
+#  encryption:       ssl
+#  auth-mode:        login
+#  spool: { type: 'memory' }
+#  stream_options:
+#    ssl:
+#      allow_self_signed: true
+#      verify_peer: false
+#      verify_peer_name: false
+
+swiftmailer:
+  transport:  smtp
+  encryption: tls
+  auth_mode:  plain
+  host:       smtp.gmail.com
+  username:   watchedscom@gmail.com
+  password:   jhabz@#DA62kf0{
+  port:       587
+  stream_options:
+    ssl:
+      allow_self_signed: true
+      verify_peer: false
+      verify_peer_name: false

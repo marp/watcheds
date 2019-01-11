@@ -1,0 +1,53 @@
+{% extends "base.html.twig" %}
+{% block body %}
+        <div>
+            <div class="row">
+                <div class="col-4 col-sm-4 col-md-3">
+                    <div class="avatar-img">
+                        {% if app.user.avatar==null %}
+                            <img class="av-1" src="{{ asset('img/avatars/default.png') }}"/>
+                        {% else %}
+                            <img class="av-2" alt="" src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}"/>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-8 col-sm-8 col-md-9">
+                    {#<span>User:<br>#}
+
+                    <h class="h3">{{ user.username }}
+                        <div class="
+                    {% if user.roles|join == "ROLE_ADMIN" %}badge badge-danger
+                    {% elseif user.roles|join == "ROLE_ADMIN" %}badge badge-warning
+                    {% endif %}">
+                            {% if user.roles|join == "ROLE_ADMIN" %}
+                                Admin
+                            {% elseif user.roles|join == "ROLE_MOD" %}
+                                Moderator
+                            {% else %}
+                                {#<br>User#}
+                            {% endif %}
+                        </div>
+                    </h>
+                    <br>
+                    User since:<b> {{ user.since|date('Y-m-d') }}</b>
+                    <br>
+                    Visibility:<b> {% if user.visibility == 0 %}Public{% else %}Private{% endif %}</b>
+                    {#{{ app.user.roles|join }}#}
+                </div>
+            </div>
+            <hr>
+            {% if user.visibility == 0 %}
+                <i class="fas fa-envelope"></i> Email: <b><a href="mailto:{{ user.email }}">{{ user.email }}</a></b><br>
+                <i class="fas fa-pencil-alt"></i> Description: <b>{{ user.description }}</b>
+            {% else %}
+                <h4>This account is private. Only the owner can see their profile.</h4>
+            {% endif %}
+            {% if user.owner == true %}
+                <br>
+                <br>
+                <h5 class="alert alert-light">
+                    Now you see your profile just like other users, to make changes go to <a href="{{ url('profile') }}">/profile</a>.
+                    </h5>
+            {% endif %}
+        </div>
+{% endblock %}

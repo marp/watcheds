@@ -1,0 +1,147 @@
+{% extends "base.html.twig" %}
+{% block title %}About{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    // $(document).ready(function() {
+    $('li.active').removeClass('active');
+    $('a[href="/about"]').closest('li').addClass('active');
+    // });
+    </script>
+{% endblock%}
+{% block body %}
+    <h1>About WatchedS.com</h1>
+
+    <div id="accordion">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="btn btn-link text-black" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Authors
+                    </button>
+                </h5>
+            </div>
+
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                    <i class="fas fa-envelope"></i> Email: <a href="mailto:watchedscom@gmail.com">watchedscom@gmail.com</a><br>
+                    <i class="fab fa-github"></i> Github: <a href="https://github.com/mptks">/mptks</a><br>
+                    <i class="fas fa-circle"></i> Website: <a href="https://example.com">/website</a>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed text-black" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        History
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div class="card-body">
+
+
+                    <p>
+                        Work started in August 2018. I made a simple list of watched in php and sqlite.
+                    </p>
+                    23 August 2018 - first working alpha
+                    <img src="{{ asset('img/about/alpha.PNG') }}" alt="">
+                    <hr>
+                    <p>
+                        To 27 August I added series change, multi column sorting, searching in episodes, login.
+                    </p>
+                    27 August 2018 - beta version<br>
+                    <img src="{{ asset('img/about/beta1.PNG') }}" alt="">
+                    <br>
+                    <br>
+                    <img src="{{ asset('img/about/beta2.PNG') }}" alt="">
+                    <br>
+                    <br>
+                    <img src="{{ asset('img/about/beta3.PNG') }}" alt="">
+                    <hr>
+                    <p>
+                        29 August, Added <a href="https://getbootstrap.com/">bootstrap</a>,
+                        bootstrap sorting table, login and register system.
+                    </p>
+                    27 August 2018 - beta version<br>
+                    <img src="{{ asset('img/about/working1.PNG') }}" alt="">
+                    <br>
+                    <br>
+                    <img src="{{ asset('img/about/working2.PNG') }}" alt="">
+                    <br>
+                    <br>
+                    <img src="{{ asset('img/about/working3.PNG') }}" alt="">
+                    <br>
+                    <br>
+                    <img src="{{ asset('img/about/working4.PNG') }}" alt="">
+                    <hr>
+                    <p>
+                        13 September, Added <a href="https://imdb.com">IMDb.com</a> database, search system, ajax, password change.
+                    </p>
+                    <img src="{{ asset('img/about/working5.PNG') }}" alt="">
+                    <br>
+                    <br>
+                    <img src="{{ asset('img/about/working6.PNG') }}" alt="">
+
+                    <hr>
+                    <p>
+                        October-December, A page rewritten from scratch in <a href="https://symfony.com/">symfony</a>. Added many improvements and new functions.
+                    </p>
+                    <img STYLE="width: 966px; height: auto;" src="{{ asset('img/about/working7.PNG') }}" alt="">
+                    <hr>
+                    <p>
+                        22 December 2018 - premiere
+                    </p>
+                    <hr>
+                    23 December 2018 - update:
+                    <ul>
+                        <li>being not logged in and going to the episode list no longer throws out an error</li>
+                        <li>some language errors have been corrected</li>
+                        <li>nicer error messages</li>
+                        <li>changed sorting icon ascending and descending</li>
+                        <li>the aesthetics of information about the TV series has been improved</li>
+                        <li>a message about being an owner has been added if you have visited your own profile</li>
+                        <li>if the user does not have an avatar, it is set to default</li>
+                        <li>from now users can set a description on their profiles</li>
+                    </ul>
+                    <hr>
+                    25 December 2018 - update:
+                    <ul>
+                        <li>username in navigation bar user dropdown is now properly centered</li>
+                        <li>the search engine now shows the most relevant searches at the beginning</li>
+                        <li>in the search engine you can choose what you are looking for</li>
+                        <li>pictures in the landing page are now displayed correctly</li>
+                    </ul>
+                    28 December 2018:
+                    <ul>
+                        <li>the year in the footer is not duplicated if the creation year of the page is the current year</li>
+                        <li>added cookie alert</li>
+                        <li>added login form in navbar dropdown</li>
+                        <li>added browsing episodes for non logged in users</li>
+                        <li>adding and subtracting points, avatars, links on the microblog now work properly</li>
+                    </ul>
+                    9 January 2019:
+                    <ul>
+                        <li>added markdown editor to microblog</li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingThree">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed text-black" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Other
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                <div class="card-body">
+                    Many questions are answered in <a href="{{ url('faq') }}">faq.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

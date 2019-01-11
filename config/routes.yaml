@@ -1,0 +1,9 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController.php::index
+logout:
+  path: /logout
+
+#forms:
+#  resource: '../src/Form/'
+#  type:     annotation

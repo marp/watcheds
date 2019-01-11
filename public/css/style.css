@@ -1,0 +1,274 @@
+body{
+    font-family: 'Saira Semi Condensed', sans-serif;
+}
+
+.container{
+    margin-top: 100px;
+}
+.link-custom{
+    font-weight: 900;
+    cursor: pointer;
+}
+.slider-custom{
+    margin-top: 50px;
+}
+.tab-content-custom{
+
+}
+
+/*Checkboxes*/
+.label-cbx {
+    user-select: none;
+    cursor: pointer;
+    margin-bottom: 0;
+}
+.label-cbx input:checked + .checkbox {
+    border-color: #20C2E0;
+}
+.label-cbx input:checked + .checkbox svg path {
+    fill: #20C2E0;
+}
+.label-cbx input:checked + .checkbox svg polyline {
+    stroke-dashoffset: 0;
+}
+.label-cbx:hover .checkbox svg path {
+    stroke-dashoffset: 0;
+}
+.label-cbx .checkbox {
+    position: relative;
+    top: 2px;
+    float: left;
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #C8CCD4;
+    border-radius: 3px;
+}
+.label-cbx .checkbox svg {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+}
+.label-cbx .checkbox svg path {
+    fill: none;
+    stroke: #20C2E0;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 71px;
+    stroke-dashoffset: 71px;
+    transition: all 0.6s ease;
+}
+.label-cbx .checkbox svg polyline {
+    fill: none;
+    stroke: #FFF;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 18px;
+    stroke-dashoffset: 18px;
+    transition: all 0.3s ease;
+}
+.label-cbx > span {
+    pointer-events: none;
+    vertical-align: middle;
+}
+
+.cntr {
+    position: absolute;
+    top: 45%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.invisible {
+    position: absolute;
+    z-index: -1;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+/*ETC*/
+.registration_error_widget {
+    color: red;
+}
+.registration_error_widget > ul{
+    margin-bottom: 0px;
+}
+.btn-facebook{
+    border-color: #4863ae;
+    background-color: #4863ae;
+    color:white;
+}
+
+.btn-facebook:hover{
+    background-color: white;
+    color: #4863ae;
+    border-color: #4863ae;
+}
+.btn-google{
+    border-color: #d34836;
+    background-color: #d34836;
+    color:white;
+}
+
+.btn-google:hover{
+    color: #d34836;
+    border-color:  #d34836;
+    background-color: white;
+}
+.avatar-img{
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: 150px;
+}
+.avatar-img-mini{
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 35px;
+    height: 35px;
+}
+.av-1{
+    position: relative;
+    top: 0;
+    left: 0;
+}
+.av-1-mini{
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 35px;
+    height: 35px;
+    vertical-align:middle
+}
+.av-2{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 150px;
+    height: 150px;
+    background-color: white;
+}
+.av-2-mini{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 35px;
+    height: 35px;
+    vertical-align:middle;
+    background-color: white;
+}
+
+.footer-custom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 5;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    margin-bottom: 60px; /* Margin bottom by footer height */
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /*height: 60px;  Set the fixed height of the footer here */
+    /*line-height: 60px; /* Vertically center the text there */
+    background-color: #f5f5f5;
+}
+
+/* END OF Sticky footer styles
+-------------------------------------------------- */
+
+.mx-15{
+    margin-left: 9px; margin-right: 9px;
+}
+
+.episode_description{
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.episode_description:hover{
+    overflow: visible;
+    white-space: normal;
+}
+
+.episode_year{
+    font-size: 100%;
+    font-family: 'Courier New';
+}
+.episode_season{
+    font-size: 100%;
+    font-family: monospace;
+
+}
+.episode_season_header{
+    font-size: 70% !important;
+    max-width: 50px !important;
+    overflow: visible;
+    white-space: normal;
+    padding: 0px !important;
+}
+
+.table-custom-custom{
+    line-height: 1 !important;
+}
+
+/*PLX*/
+#plx {
+    background: url(/img/slider3.jpg);
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-size: auto auto;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.plx-div{
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding-bottom: 100px;
+    padding-top: 100px;
+}
+
+.cursor-pointer-custom:hover{
+    cursor:pointer;
+}
+
+.text-black{
+    color: black;
+    font-weight: 900;
+}
+
+.header-username{
+    -webkit-flex: 1; /* Safari 6.1+ */
+    flex: 1;
+}
+
+.header-user-dropdown-button{
+    display: -webkit-flex; /* Safari */
+    -webkit-align-items: center; /* Safari 7.0+ */
+    display: flex;
+    align-items: center;
+}
+.login-dropdown-color-hover:hover{
+ color:#18BC9C!important;
+    text-decoration: none;
+}

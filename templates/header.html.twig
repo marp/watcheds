@@ -1,0 +1,104 @@
+<header>
+    {#<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">#}
+    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-primary p-0">
+        {#<a class="navbar-brand" href="\">{{ site_name }}</a>#}
+        <a class="navbar-brand m-0" href="\"><img height="60" width="120" src="{{ asset('img/logo/2.png') }}"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse p-3" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/faq">FAQ</a>
+                </li>
+                {#<li class="nav-item">#}
+                    {#<a class="nav-link disabled" href="#">Disabled</a>#}
+                {#</li>#}
+            </ul>
+             {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                 <div class="navbar-text mr-sm-3">Logged as </div>
+                 <div class="btn-group">
+                 <button type="button" class="my-1 my-sm-0 btn btn-light dropdown-toggle btn-user-header p-0 m-0 pr-2 header-user-dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                     {% if app.user.avatar==null %}
+                         <div style="float: left" class="avatar-img-mini p-0">
+                             <img class="av-1-mini" src="{{ asset('img/avatars/default.png') }}"/>
+                         </div>
+                     {% else %}
+                         <div style="float: left" class="avatar-img-mini p-0">
+                             <img class="av-2-mini" alt=""  src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}"/>
+                         </div>
+                     {% endif %}
+                     <span class="p-0 m-0 header-username">&nbsp; {{ app.user.username }}</span>
+                 </button>
+                 <div class="dropdown-menu pb-0">
+                     <a class="dropdown-item" href="/profile/{{ app.user.username }}"><i class="fas fa-user"></i> Profile</a>
+                     <a class="dropdown-item" href="/profile"><i class="fas fa-user-cog"></i> Settings</a>
+                     {% if app.user.roles|join == "ROLE_ADMIN" %}
+                     <a class="dropdown-item color-theme-1" href="/admin"><i class="fas fa-user-secret"></i> Admin Panel</a>
+                     {% endif %}
+                     <div class="dropdown-divider bg-secondary"></div>
+                     <a class="dropdown-item pb-2" href="/logout" style="font-weight: 900;"><i class="fas fa-sign-out-alt"></i> Log out!</a>
+                 </div>
+                </div>
+             {% else %}
+                 <a href="/register" class="mr-sm-2 btn btn-outline-light my-1 my-sm-0 ">Register</a>
+                 <div class="d-block d-md-none ">
+                    <a href="/login" class="mr-sm-2 btn btn-outline-warning my-1 my-sm-0 ">Login</a>
+                 </div>
+                 <div class="d-none d-md-block">
+                 <ul class="nav pull-right">
+                     <li class="dropdown" id="menuLogin">
+                         <a class="dropdown-toggle text-white login-dropdown-color-hover pl-3 pr-2"  href="" data-toggle="dropdown" id="navLogin">Login</a>
+                         <div class="dropdown-menu" style="padding:17px; width: 230px;">
+                             <form action="{{ path('login') }}" method="post">
+                                 <div class="input-group input-group-sm mb-1">
+                                     <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                        <i class="fas fa-user" style="width: 13px; height: 13px;"></i>
+                                        </span>
+                                     </div>
+                                     <input class="form-control form-control-sm" type="text" placeholder="Username" name="_username">
+                                 </div>
+                                 <div class="input-group input-group-sm mb-2">
+                                     <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                    <i class="fas fa-key" style="width: 13px; height: 13px;"></i>
+                                    </span>
+                                     </div>
+                                     <input class="form-control form-control-sm" type="password" placeholder="Password" name="_password">
+                                 </div>
+                                 <div class="custom-control custom-checkbox mb-2">
+                                     <input type="checkbox" class="custom-control-input" id="remember_me" name="_remember_me" checked/>
+                                     <label class="custom-control-label" for="remember_me">Remember me</label>
+                                 </div>
+                                     <div>
+                                         <button class="btn btn-primary form-control" type="submit">Login</button>
+                                     </div>
+                                     <div class="text-center">
+                                         <a href="{{ url('resetPassword') }}" {#class="btn btn-link px-0" type="button"#}>Forgot password?</a>
+                                     </div>
+
+                             </form>
+                         </div>
+                     </li>
+                 </ul>
+                 </div>
+             {% endif %}
+            <form class="ml-sm-3 form-inline m-sm-0" method="get" action="\search">
+            <div class="input-group md-form form-sm form-2 pl-0">
+                <input class="form-control my-0 py-1 red-border" type="text" name="s" placeholder="Search" aria-label="Search">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary input-group-text lighten-3"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </nav>
+</header>

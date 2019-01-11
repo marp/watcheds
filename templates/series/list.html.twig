@@ -1,0 +1,388 @@
+{% extends "base.html.twig" %}
+{% block title %}{{ series.name }}{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/theme.bootstrap_4.css') }}">
+    <script src="{{ asset('js/jquery.tablesorter.js') }}"></script>
+    <script src="{{ asset('js/jquery.tablesorter.widgets.js') }}"></script>
+    <script src="{{ asset('js/epsearch.js') }}"></script>
+    <script src="{{ asset('js/jquery.tablesorter.pager.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+        $(function() {
+            $("table").tablesorter({
+                theme : "bootstrap",
+
+                widthFixed: true,
+
+                // widget code contained in the jquery.tablesorter.widgets.js file
+                // use the zebra stripe widget if you plan on hiding any rows (filter widget)
+                // the uitheme widget is NOT REQUIRED!
+                widgets : [ "filter", "columns", "zebra" ],
+
+                widgetOptions : {
+                    // using the default zebra striping class name, so it actually isn't included in the theme variable above
+                    // this is ONLY needed for bootstrap theming if you are using the filter widget, because rows are hidden
+                    zebra : ["even", "odd"],
+
+                    // class names added to columns when sorted
+                    columns: [ "primary", "secondary", "tertiary" ],
+
+                    // reset filters button
+                    filter_reset : ".reset",
+
+                    // extra css class name (string or array) added to the filter element (input or select)
+                    filter_cssFilter: [
+                        'form-control',
+                        'form-control',
+                        'form-control custom-select', // select needs custom class names :(
+                        'form-control',
+                        'form-control',
+                        'form-control',
+                        'form-control'
+                    ]
+
+                }
+            })
+                .tablesorterPager({
+
+                    // target the pager markup - see the HTML block below
+                    container: $(".ts-pager"),
+
+                    // target the pager page select dropdown - choose a page
+                    cssGoto  : ".pagenum",
+
+                    // remove rows from the table to speed up the sort of large tables.
+                    // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
+                    removeRows: false,
+
+                    // output string - default is '{page}/{totalPages}';
+                    // possible variables: {page}, {totalPages}, {filteredPages}, {startRow}, {endRow}, {filteredRows} and {totalRows}
+                    output: '{startRow} - {endRow} / {filteredRows} ({totalRows})'
+
+                });
+
+        });
+        let apikey = '3ffbff40';
+
+        let tconst = $("#series_tconst").html();
+        let url =  "https://www.omdbapi.com/?i="+tconst+"&apikey="+apikey;
+        $.getJSON( url, function( data ) {
+            $("#series_description").html(data['Plot']);
+            $("#series_actors").html(data['Actors']);
+            $("#series_country").html(data['Country']);
+            $("#series_language").html(data['Language']);
+            $("#series_poster").attr('src',data['Poster']);
+        });
+
+        for(var i=1, x = document.getElementById('number_of_elements').innerHTML; i < x; i++){
+            let name1 = "#episode_title_"+i;
+            let name2 = "#episode_year_"+i;
+            let name3 = "#episode_description_"+i;
+            let tconst = $(name1).html();
+            let url =  "https://www.omdbapi.com/?i="+tconst+"&apikey="+apikey;
+            // console.log(url);
+            $.getJSON( url, function( data ) {
+                $(name1).html(data['Title']);
+                $(name2).html(data['Year']);
+                $(name3).html(data['Plot']);
+            })
+        }
+    // });
+    //     $(document).ready(function() {
+
+            // $('.watchbtnclass').addEventListener("click", values);
+            var episodeButtons = document.getElementsByClassName("watchbtnclass");
+            for (var i = 0 ; i < episodeButtons.length; i++) {
+                episodeButtons[i].addEventListener('click' , values , false ) ;
+            }
+            function values() {
+                var val = $(this).val;
+                // console.log(val);
+                return true;
+            }
+        });
+/*        function clickWatch(button) {
+            let btnid = button.id;
+            let tconst = btnid.split("_");
+            tconst = tconst[1];
+            // var formWatch = $('.watchbtnclass');
+            let formWatch = $(document).find("#form_"+tconst);
+            formWatch = formWatch.submit();
+            /!*
+
+
+            function (e, formWatch) {*!/
+            //     e.preventDefault();
+            // $('#submit').prop('disabled', 1);
+            var formData = formWatch.serialize();
+            // alert(formWatch);
+            $.ajax({
+                type: formWatch.attr('method'),
+                url: formWatch.attr('action'),
+                data: formData,
+                success: function (data, formData, formWatch) {
+                    // alert("TU MA BYC SUBMIT VALUE");
+                    // console.log(data);
+                    // let button = formWatch.find('[type="submit"]');
+                    // console.log(button);
+                    let button = formWatch;
+                    if (button.innerHTML == "✔") {
+                        button.innerHTML = "✘";
+                        button.classList.remove('btn-success');
+                        button.classList.add('btn-danger');
+                    }
+                    else {
+                        button.innerHTML = "✔";
+                        button.classList.remove('btn-danger');
+                        button.classList.add('btn-success');
+                    }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(textStatus+jqXHR+errorThrown);
+                }
+            })
+                .always(function () {
+                    // $('#submit').prop('disabled', false);
+                });
+            /!*});*!/
+        } */
+
+
+        // function clickWatch(button) {
+/*            var formW = $('#form_tt1054724');
+            formW.submit(function(e){
+                e.preventDefault();
+
+                // $('#submitVisibility').prop('disabled', 1);
+
+                var formData = formW.serialize();
+                // formData += '&' + $('#submitVisibility').attr('name') + '=' + $('#submitVisibility').attr('value');
+                $.ajax({
+                    type: formW.attr('method'),
+                    url: formW.attr('action'),
+                    data: formData,
+                    success: function(data){
+                        // $('#profile_visibility').html(' '+$('#change_visibility_visibility option:selected').text());
+                        // $('#message').html('<div class="alert alert-success">Email has been changed!</div>').delay(3000).fadeIn(1000);
+                        // $('#oldmail').val($('#change_email_email').val());
+                        // $('#oldmail').css("background-color", "#edffe6");
+
+                        //$('#oldmail').val('Email has been changed!');
+                        // $('#submit_btn').prop('disabled',false);
+
+                        console.log(button.id);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    }
+
+                })
+                    .always(function() {
+                        // $('#submitVisibility').prop('disabled',false);
+                    });
+            });*/
+        // }
+
+        //Visibility
+/*        function click(id) {
+            var formVisibility = $('#form_'+id);
+            formVisibility.submit(function (e) {
+                e.preventDefault();
+
+                // $('#submitVisibility').prop('disabled', 1);
+
+                var formData = formVisibility.serialize();
+                alert(formData);
+                // formData += '&' + $('#submitVisibility').attr('name') + '=' + $('#submitVisibility').attr('value');
+                $.ajax({
+                    type: formVisibility.attr('method'),
+                    url: formVisibility.attr('action'),
+                    data: formData,
+                    success: function (data, formData) {
+                        // $('#profile_visibility').html(' '+$('#change_visibility_visibility option:selected').text());
+                        // $('#message').html('<div class="alert alert-success">Email has been changed!</div>').delay(3000).fadeIn(1000);
+                        // $('#oldmail').val($('#change_email_email').val());
+                        // $('#oldmail').css("background-color", "#edffe6");
+
+                        //$('#oldmail').val('Email has been changed!');
+                        // $('#submit_btn').prop('disabled',false);
+                        console.log('success!\n\n\n\n\n' + formData);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $('#message').html(textStatus).delay(2000).fadeOut(2000);
+                    }
+
+                })
+                    .always(function () {
+                        $('#submitVisibility').prop('disabled', false);
+                    });
+            });
+        }*/
+
+        // $(document).on('click', 'button.watchbtnclass', function(){
+        function clickWatch(button) {
+            that = $(this);
+            $(button).prop('disabled', true);
+            $.ajax({
+                url: '/ajax',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "tconst": button.value
+                },
+                async: true,
+                success: function (data) {
+                    // console.log(data);
+                    if (button.innerHTML === "✔") {
+                        button.innerHTML = "✘";
+                        button.classList.remove('btn-success');
+                        button.classList.add('btn-danger');
+                    }
+                    else {
+                        button.innerHTML = "✔";
+                        button.classList.remove('btn-danger');
+                        button.classList.add('btn-success');
+                    }
+                    // $('div#ajax-results').html(data.output);
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(textStatus);
+                    alert(jqXHR);
+                    alert(errorThrown);
+                }
+            })
+                .always(function () {
+                    $(button).prop('disabled', false);
+                });
+            /*});*/
+        }
+        // });
+
+
+    </script>
+    <style>
+        .tablesorter-pager .btn-group-sm .btn {
+            font-size: 1.2em; /* make pager arrows more visible */
+        }
+    </style>
+{% endblock%}
+{% block body %}
+    </main>
+    <div class="mx-1 mx-sm-2 mx-md-4">
+    <div class="row">
+        <div class="col">
+            <h1>{{ series.name }}
+                <a class="text-primary" href="https://www.imdb.com/title/{{ series.tconst }}/"><i class="fab fa-imdb"></i> </a>
+            </h1>
+            <p>{{ series.startYear }} {% if series.endYear != "N" %} - {{ series.endYear }}{% endif %} ,
+                {% if series.genres != "N" %} {{ series.genres }} {% endif %}</p>
+            <span id="series_description"></span><hr>
+            <span style="font-weight: 900;" class="text-primary">Actors: </span><span id="series_actors"></span><br>
+            <span style="font-weight: 900;" class="text-primary">Country: </span><span id="series_country"></span><br>
+            <span style="font-weight: 900;" class="text-primary">Language: </span><span id="series_language"></span>
+            <p class="d-none" id="series_tconst">{{ series.tconst }}</p>
+        </div>
+        <div class="col text-center">
+            <img class="rounded float-sm-right" id="series_poster" src="{{ asset('img/poster.jpg') }}">
+        </div>
+    </div>
+
+        <div class="mt-2 row justify-content-center">
+            <div class="col col-sm-10 col-md-8">
+                <input id="myInput" type="text" aria-label="Search" class="mx-auto form-control my-sm-3 border-primary" placeholder="Search the entire columns">
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped table-hover table-responsive form-fixer table-custom-custom"><thead class="thead-dark">
+<tr>
+    <th class="td_EpisodeID">Season #</th>
+    <th></th>
+    <th>#</th>
+    <th>Name</th>
+    <th {#class="episode_season_header" #}alt="Season">Season</th>
+    <th>Year</th>
+    <th>Description</th>
+</tr></thead><tfoot>
+<tr>
+    <th>Season #</th>
+    <th></th>
+    <th>#</th>
+    <th>Name</th>
+    <th {#class="episode_season_header"#} alt="Season">Season</th>
+    <th>Year</th>
+    <th>Description</th>
+</tr>
+<tr>
+    <th colspan="7" class="ts-pager">
+        <div class="form-inline">
+            <div class="btn-group btn-group-sm mx-1" role="group">
+                <button type="button" class="btn btn-secondary first" title="first">first</button>
+                <button type="button" class="btn btn-secondary prev" title="previous">prev</button>
+            </div>
+            <span class="pagedisplay"></span>
+            <div class="btn-group btn-group-sm mx-1" role="group">
+                <button type="button" class="btn btn-secondary next" title="next">next</button>
+                <button type="button" class="btn btn-secondary last" title="last">last</button>
+            </div><span class="ml-sm-3"># of episodes:</span>
+            <select class="form-control-sm custom-select px-1 pagesize" title="Select page size">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30" >30</option>
+                <option value="all" selected="selected">All Rows</option>
+            </select>
+            <span class="ml-sm-3">Page:</span><select class="form-control-sm custom-select px-4 mx-1 pagenum" title="Select page number"></select>
+        </div>
+    </th>
+</tr>
+</tfoot><tbody id="myTableSearch">
+        {% for ep in episodes %}
+        <tr>
+            <td class="text-center p-0" style="font-weight:900; font-size: 25px;">{{ ep.episodeNumber }}</td>
+            <td class="button_td p-0 m-0">
+                {#{{ form_start(form,{'attr':{'id':'form_', 'class':'iswatchedforms'}}) }}#}
+                {#{{ form_widget(form) }}#}
+{#                <form id="form_{{ ep.tconst }}" method="post" action="" class="watchedclass">
+                <button
+                        id="button_{{ ep.tconst }}"
+                        #}{#type="submit"#}{#
+                        class='btn btn-{% if ep.iswatched == '✘' %}danger{% else %}success{% endif %} m-sm-0 watchbtnclass'
+                        #}{#name="submit"#}{#
+                        name="tconst"
+                        onclick="clickWatch(this)"
+                        value="{{ ep.tconst }}">{{ ep.iswatched }}
+                </button>
+                    <input type="hidden" name="submit" value="{{ ep.tconst }}">
+                </form>#}
+                <button
+                        id="button_{{ ep.tconst }}"
+                        class='btn btn-{% if ep.iswatched == '✘' %}danger{% else %}success{% endif %} m-sm-0 watchbtnclass {% if isLogged == false %}disabled{% endif %}'
+                        {#name="submit"#}
+                        name="tconst"
+                        {% if isLogged == true %}onclick="clickWatch(this)"{% endif %}
+                        value="{{ ep.tconst }}">{{ ep.iswatched }}
+                </button>
+                {#<button
+                        id="button_{{ ep.tconst }}"
+                        class='btn btn-{% if ep.iswatched == '✘' %}danger{% else %}success{% endif %} m-sm-0 watchbtnclass'
+                        #}{#name="submit"#}{#
+                        name="tconst"
+                        onclick="clickWatch(this)"
+                        value="{{ ep.tconst }}"><i class="far fa-check-square"></i><i class="far fa-square"></i>
+                </button>#}
+                {#{{ form_end(form) }}#}
+            </td>
+            <td>{{ ep.number }}</td>
+            <td id="episode_title_{{ ep.number }}">{{ ep.tconst }}</td>
+            <td class="episode_season">{{ ep.season }}</td>
+            <td id="episode_year_{{ ep.number }}" class="episode_year"></td>
+            <td id="episode_description_{{ ep.number }}" class="episode_description"></td>
+        </tr>
+    {% endfor %}
+
+        </tbody></table>
+    </div>
+    <span class="d-none" id="number_of_elements">{{ number }}</span>
+{% endblock %}

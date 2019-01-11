@@ -1,0 +1,5 @@
+<footer class="footer">
+     <div class="footer-copyright text-center py-3 bg-primary text-light"> Copyright © {% if year_of_site_creation == "now"|date("Y") %} {{ year_of_site_creation }} {% else %} {{ year_of_site_creation }} - {{ "now"|date("Y") }} {% endif %}
+        <a href="/" class="text-muted"> {{ site_name }}</a>
+    </div>
+</footer>

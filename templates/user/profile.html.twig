@@ -1,0 +1,191 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+
+        <div>
+            <div class="row">
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                    <div class="avatar-img">
+                    {% if app.user.avatar==null %}
+                        <img class="av-1" src="{{ asset('img/avatars/default.png') }}"/>
+                    {% else %}
+                        <img class="av-2" alt="" src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}"/>
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="col-6 col-sm-8 col-md-9 col-lg-10">
+
+                    <h class="h3">{{ app.user.username }}
+                    <div class="
+                    {% if app.user.roles|join == "ROLE_ADMIN" %}badge badge-danger
+                    {% elseif app.user.roles|join == "ROLE_ADMIN" %}badge badge-warning
+                    {% endif %}">
+                        {% if app.user.roles|join == "ROLE_ADMIN" %}
+                            Admin
+                        {% elseif app.user.roles|join == "ROLE_MOD" %}
+                            Moderator
+{#                        {% else %}
+                            User#}
+                        {% endif %}
+                    </div>
+                        </h>
+                    <br>
+                    <span class="text-muted">User since:</span><b> {{ app.user.creationdatetime|date('Y-m-d') }}</b>
+                    <br>
+                    <span class="text-muted">Visibility:</span><b id="profile_visibility"> {% if app.user.visibility == 0 %}Public{% else %}Private{% endif %}</b>    <br>
+                    {#{{ app.user.roles|join }}#}
+
+                    <a href="{{ url('profile') }}/{{ app.user.username }}">See your profile</a>
+
+
+
+                </div>
+            </div>
+            <hr>
+        </div>
+
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
+                <a class="nav-item nav-link" id="nav-edit-tab" data-toggle="tab" href="#nav-edit" role="tab" aria-controls="nav-edit" aria-selected="false">Change password or email</a>
+                <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
+                {#<a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</a>#}
+            </div>
+        </nav>
+        <div class="row ">
+        <div class="tab-content col-sm-6 tab-content-custom" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <i class="fas fa-envelope"></i> Email: <b><a href="mailto:{{ app.user.email }}">{{ app.user.email }}</a></b><br>
+                <i class="fas fa-pencil-alt"></i> Description: <b>{{ app.user.description }}</b> <a href="" data-toggle="modal" data-target="#exampleModal">
+                    edit
+                </a><br>
+            </div>
+            <div class="tab-pane fade" id="nav-edit" role="tabpanel" aria-labelledby="nav-edit-tab">
+                <h2 class="my-3">Change password</h2>
+                {{ form_start(formChangePassword) }}
+                {{ form_row(formChangePassword.oldpassword, {'attr':{'class':'form-control'},'label':'Old password'})  }}
+                {{ form_row(formChangePassword.newpassword, {'attr':{'class':'form-control'},'label':'Repeat password'})  }}
+                <button class="btn btn-primary my-3"><i class="fas fa-key"></i> Change password</button>
+                {{ form_end(formChangePassword) }}
+
+                <hr>
+
+                <h2>Change email</h2>
+                <div id="message"></div>
+
+                    <label for="oldmail">Current mail </label>
+                    <input disabled id="oldmail" type="text" class="form-control" value="{{ app.user.email }}">
+                    {#<label for="newmail">New mail: </label>#}
+                    {#<input id="newmail" type="text" class="form-control">#}
+                    {#{{ form_start(formChangeEmail) }}#}
+                    {{ form_start(formChangeEmail, {'attr': {'id': 'change_mail'}}) }}
+                    {{ form_row(formChangeEmail.email, {'attr':{'class':'form-control'}}) }}
+                    <button id="submit_btn" type="submit" class="btn btn-primary my-3"><i class="fas fa-envelope"></i> Change email</button>
+                    {{ form_end(formChangeEmail) }}
+            </div>
+
+            <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
+                <h2>Visibility</h2>
+                <p>Can other users see your profile?</p>
+                <div id="message"></div>
+                {{ form_start(formVisibility, {'attr':{'id':'change_visibility'}}) }}
+                {{ form_row(formVisibility.visibility) }}
+                <button id="submitVisibility"  class="btn btn-primary my-3"><i class="far fa-eye"></i> Change visibility</button>
+                {{ form_end(formVisibility) }}
+                <hr>
+                <h2>Avatar</h2>
+                <div id="avatarMessage" class="alert alert-success" style="display:none">
+                    Your avatar has been successfully changed
+                </div>
+                The maximum file size is 1MB. Preferred size 150x150 px. If your avatar is white, try upload it again.
+                <div class="img-avatar">
+                    <img id="avatarPreview" width="150" height="150" style="display:none" src="{{ asset('img/avatars/default.png') }}">
+                </div>
+                {{ form_start(formAvatar,{'attr':{'id':'change_avatar'}}) }}
+                <span class="registration_error_widget">{{ form_errors(formAvatar.avatar) }}</span>
+                {{ form_widget(formAvatar.avatar, {'attr':{'class':'form-control-file','accept':'image/x-png,image/gif,image/jpeg'}})}}
+                <button id="submitAvatar"  class="btn btn-primary my-3"><i class="fas fa-upload"></i> Upload</button>
+                {{ form_end(formAvatar) }}
+                <hr>
+                {#<a class="text-muted" href="" data-toggle="modal" data-target="#deleteAccountModal">Delete account</a>#}
+            </div>
+        </div>
+        </div>
+
+        {#MODALS#}
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">User description</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(formDescription, {'attr':{'id':'change_description'}}) }}
+                        {{ form_row(formDescription.description, {'attr':{'value': app.user.description }}) }}
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary"><i class='far fa-edit'></i> Save changes</button>
+                        {{ form_end(formDescription) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+{#MODAL DELETE ACCOUNT#}
+        <div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Do you want delete your account?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-footer">
+                        <form method="post">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" name="deleteAccount" value="true" class="btn btn-primary"><i class='far fa-trash-alt'></i> Yes, delete my account!</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/ajax_profile.js') }}"></script>
+   <script>
+/*        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#avatarPreview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+            $('#avatar_avatar').bind('change', function() {
+                readURL(this);
+                $('#avatarPreview').css('display','block');*/
+                if((this.files[0].size) > (1024*1024)){
+                    alert('The selected file is too large');
+                    // $('#submitAvatar').prop('disabled','true');
+                }else{
+                    // $('#submitAvatar').prop('disabled','false');
+                }
+            // });
+       function description() {
+          document.getElementById("description_box").innerHTML = abc;
+       }
+       function deleteAccount() {
+          document.getElementById("description_box").innerHTML = abc;
+       }
+    </script>
+{% endblock %}
