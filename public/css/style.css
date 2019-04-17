@@ -269,6 +269,16 @@ body {
     align-items: center;
 }
 .login-dropdown-color-hover:hover{
- color:#18BC9C!important;
+    color:#18BC9C!important;
     text-decoration: none;
+}
+.spinner {
+    background-color: #fff;
+    background-image: url('/img/spinner.gif');
+    background-size: 25px 25px;
+    background-position:right center;
+    background-repeat: no-repeat;
+}
+
+.ui-autocomplete {
 }

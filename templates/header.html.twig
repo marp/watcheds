@@ -91,9 +91,9 @@
                  </ul>
                  </div>
              {% endif %}
-            <form class="ml-sm-3 form-inline m-sm-0" method="get" action="\search">
+            <form class="ml-sm-3 form-inline m-sm-0" method="get" action="{{ path('searchGet') }}">
             <div class="input-group md-form form-sm form-2 pl-0">
-                <input class="form-control my-0 py-1 red-border" type="text" name="s" placeholder="Search" aria-label="Search">
+                <input class="form-control my-0 py-1 red-border autocompleteSeries" type="text" name="s" placeholder="Search" aria-label="Search">
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-primary input-group-text lighten-3"><i class="fas fa-search"></i></button>
                 </div>
@@ -102,3 +102,12 @@
         </div>
     </nav>
 </header>
+<style>
+    #ui-id-1.ui-autocomplete {
+        z-index: 9999;
+        position: fixed;
+    }
+    #ui-id-1.ui-autocomplete.source:hover {
+        z-index: 9999;
+    }
+</style>

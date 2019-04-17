@@ -7,8 +7,6 @@ parameters:
     locale: 'en'
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
     avatars_directory: '%kernel.project_dir%/public/uploads/avatars'
-    site_name: '%env(SITE_NAME)%'
-    year_of_site_creation: '%env(year_of_site_creation)%'
 
 services:
     _defaults:
@@ -23,7 +21,6 @@ services:
     App\:
         resource: '../src/*'
         exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
-
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:

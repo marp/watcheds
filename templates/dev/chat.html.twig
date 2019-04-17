@@ -1,0 +1,145 @@
+<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('css/chat/chat.css') }}">
+<script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.js') }}"></script>
+<script src="{{ asset('js/chat/chat.js') }}"></script>
+<!------ Include the above in your HEAD tag ---------->
+<style>
+    .bottom-right {
+        right: 0;
+        bottom: 0;
+        position: absolute;
+        z-index: 1100;
+    }
+</style>
+<script>
+function pmListShow(button) {
+    let pmList = $('#pmList');
+    if(pmList.css('display') === 'none') {
+        pmList.show();
+    }else{
+        pmList.hide();
+    }
+    $(button).addClass('form-control');
+}
+function pmOpenChat(userId) {
+    console.log(userId);
+    $('#chatLine').append('<div class="container">\n' +
+        '    <div class="row">\n' +
+        '        <div class="panel panel-chat" style="resize: both; overflow: auto;">\n' +
+        '            <div class="panel-heading">\n' +
+        '                <a href="#" class="chatMinimize" onclick="return false"><span>Özgür Gürbüz</span></a>\n' +
+        '                <a href="#" class="chatClose" onclick="return false"><i class="">X</i></a>\n' +
+        '                <div class="clearFix"></div>\n' +
+        '            </div>\n' +
+        '            <div class="panel-body">\n' +
+        '                <div class="messageMe">\n' +
+        '                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>\n' +
+        '                    <span>asdasdssadasdasdassssssssssssssssssssssssssssssssssssssssssdasdasd</span>\n' +
+        '                    <div class="clearFix"></div>\n' +
+        '                </div>\n' +
+        '                <div class="messageHer">\n' +
+        '                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>\n' +
+        '                    <span>asdasdsassssssssssssssssssssssssssssssssssssssss</span>\n' +
+        '                    <div class="clearFix"></div>\n' +
+        '                </div>\n' +
+        '                <div class="messageMe">\n' +
+        '                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>\n' +
+        '                    <span>asdasdssadasdasdassssssssssssssssssssssssssssssssssssssssssdasdasd</span>\n' +
+        '                    <div class="clearFix"></div>\n' +
+        '                </div>\n' +
+        '                <div class="messageHer">\n' +
+        '                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>\n' +
+        '                    <span>asdasdsassssssssssssssssssssssssssssssssssssssss</span>\n' +
+        '                    <div class="clearFix"></div>\n' +
+        '                </div>\n' +
+        '                <div class="messageMe">\n' +
+        '                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>\n' +
+        '                    <span>asdasdssadasdasdassssssssssssssssssssssssssssssssssssssssssdasdasd</span>\n' +
+        '                    <div class="clearFix"></div>\n' +
+        '                </div>\n' +
+        '                <div class="messageHer">\n' +
+        '                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>\n' +
+        '                    <span>asdasdsassssssssssssssssssssssssssssssssssssssss</span>\n' +
+        '                    <div class="clearFix"></div>\n' +
+        '                </div>\n' +
+        '                <div class="clearFix"></div>\n' +
+        '            </div>\n' +
+        '            <div class="panel-footer">\n' +
+        '                <textarea name="textMessage" cols="0" rows="0"></textarea>\n' +
+        '            </div>\n' +
+        '        </div>\n' +
+        '    </div>\n' +
+        '</div>');
+}
+</script>
+<div class="container" style="width: 100%; height: 100%;">
+    <div id="pmList" class="" style="display: none">
+        <div class="border border-primary">
+            <ul>
+                <li onclick="pmOpenChat(1);">Jan Kowalski</li>
+                <li onclick="pmOpenChat(2);">Janusz Malinowski</li>
+            </ul>
+        </div>
+    </div>
+    <div class="bottom-right">
+        <button onclick="pmListShow(this);" class="btn btn-primary">
+            PM
+        </button>
+    </div>
+</div>
+    {#<div id="chats">#}
+<div class="container">
+    <div class="row">
+        <div class="panel panel-chat" style="resize: both; overflow: auto;">
+            <div class="panel-heading">
+                <a href="#" class="chatMinimize" onclick="return false"><span>Özgür Gürbüz</span></a>
+                <a href="#" class="chatClose" onclick="return false"><i class="">X</i></a>
+                <div class="clearFix"></div>
+            </div>
+            <div class="panel-body">
+                <div class="messageMe">
+                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>
+                    <span>asdasdssadasdasdassssssssssssssssssssssssssssssssssssssssssdasdasd</span>
+                    <div class="clearFix"></div>
+                </div>
+                <div class="messageHer">
+                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>
+                    <span>asdasdsassssssssssssssssssssssssssssssssssssssss</span>
+                    <div class="clearFix"></div>
+                </div>
+                <div class="messageMe">
+                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>
+                    <span>asdasdssadasdasdassssssssssssssssssssssssssssssssssssssssssdasdasd</span>
+                    <div class="clearFix"></div>
+                </div>
+                <div class="messageHer">
+                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>
+                    <span>asdasdsassssssssssssssssssssssssssssssssssssssss</span>
+                    <div class="clearFix"></div>
+                </div>
+                <div class="messageMe">
+                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>
+                    <span>asdasdssadasdasdassssssssssssssssssssssssssssssssssssssssssdasdasd</span>
+                    <div class="clearFix"></div>
+                </div>
+                <div class="messageHer">
+                    <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt=""/>
+                    <span>asdasdsassssssssssssssssssssssssssssssssssssssss</span>
+                    <div class="clearFix"></div>
+                </div>
+                <div class="clearFix"></div>
+            </div>
+            <div class="panel-footer">
+                <textarea name="textMessage" cols="0" rows="0"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+{#</div>#}
+
+
+
+<div style="height: 400px" class="border border-primary" id="chatLine">
+
+</div>

@@ -1,7 +1,7 @@
 <?php
 namespace App\Form;
 
-use App\Entity\Posts;
+use App\Entity\Post;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,8 +15,10 @@ class AddPost extends AbstractType
     {
         $builder
             // ...
+//            ->setAction($options['router']->generate('mb_post_add'))
             ->add('content', TextareaType::class, array(/*'label' => 'Content',*/
                 'attr'=>['cols'=>"60", 'rows'=>"2", 'tabindex'=>"1"]))
+            ->getForm()
 
         ;
     }
@@ -24,6 +26,7 @@ class AddPost extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
+//            'router' => null,
 //            'data_class' => User::class,
         ));
     }

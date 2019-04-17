@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Titles;
-use App\Entity\Season;
+//use App\Entity\Season;
 use App\Entity\User;
+use App\Entity\Watched;
 
 use App\Repository\SeasonRepository;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,7 +13,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\Response;
 //use App\Repository\UserRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends AbstractController
 {
@@ -24,8 +27,9 @@ class DefaultController extends AbstractController
         return $this->render('main/homepage.html.twig');
     }
 
+
     /**
-     * @Route("/search", name="searchget", methods={"GET"})
+     * @Route("/search", name="searchGet", methods={"GET"})
      */
     public function searchget(Request $request)
     {
@@ -168,5 +172,60 @@ class DefaultController extends AbstractController
     public function faq(){
         return $this->render('main/faq.html.twig');
     }
+
+    /**
+     * @Route("ajax", name="ajax")
+     */
+    public function WatchAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        if($request->request->get('submit')){
+            $arrData = ['output' => $request->request->get('submit')];
+            $action = true;
+        }elseif($request->query->get('submit')){
+            $arrData = $request->query->get('submit');
+            $action = true;
+        }
+        else {
+            //$arr = $request->request->all();
+            $action = false;
+            return new Response('Fucked up error!');
+        }
+
+        if($action==true){
+            $isThisWatched = $this->getDoctrine()->getRepository(Watched::class)->findOneBy(['episode' => $arrData, 'userid' => $this->getUser()->getId()]);
+            $entityManager = $this->getDoctrine()->getManager();
+            if($isThisWatched==true){
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->remove($isThisWatched);
+                $entityManager->flush();
+
+
+                //return new Response("y, removed");
+
+//                return new JsonResponse(json_encode($arrData));
+                return new JsonResponse("y,removed");
+            }else{
+                //var_dump($arrData);
+                //$tconst = $arrData['tconst'];
+                $tconst = $arrData;
+                $watched = new Watched();
+                $userid = $this->getUser()->getId();
+                $watched->setUserid($userid);
+                $watched->setEpisode($tconst);
+                $entityManager->persist($watched);
+                $entityManager->flush();
+
+
+                //return new Response("no, added");
+//                return new JsonResponse(json_encode($arrData));
+                return new JsonResponse("n,added");
+            }
+        }
+
+
+    }
+
 
 }

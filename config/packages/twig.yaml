@@ -3,5 +3,8 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     globals:
-        site_name: '%site_name%'
-        year_of_site_creation: '%year_of_site_creation%'
+        site_name: 'WatchedS'
+        year_of_site_creation: '2018'
+        GOOGLE_RECAPTCHA_SITE_KEY: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+        GOOGLE_RECAPTCHA_SECRET: '%env(GOOGLE_RECAPTCHA_SECRET)%'
+        omdbapikey: '%env(omdbapikey)%'

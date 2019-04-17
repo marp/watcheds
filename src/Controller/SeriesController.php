@@ -8,6 +8,7 @@ use App\Form\UserType;
 use App\Entity\Watched;
 use App\Form\WatchedType;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -50,6 +51,9 @@ class SeriesController extends AbstractController
     {
         return $this->redirectToRoute("index");
     }
+
+
+
 
     /**
      * @Route("/{slug}", name="list")
@@ -170,31 +174,10 @@ class SeriesController extends AbstractController
             ));
 
         }else{
-            $this->redirectToRoute("/");
+           return $this->redirect("/");
         }
 
     }
 
-    /**
-     * @Route("/ajax", name="ajax")
-     */
-    public function WatchAction(Request $request)
-    {
-//    /**
-//     * @param Request $request
-//     * @Route("/ajax", name="ajax")
-//     * @return JsonResponse|Response
-//     */
-//    public function WatchAction(Request $request)
-//    {
-        if($request->request->get('submit')){
-            //make something curious, get some unbelieveable data
-            $arrData = ['output' => $request->request->get('submit')];
-            return new JsonResponse($arrData);
-        }
-
-//        return $this->render('app/main/index.html.twig');
-        return new Response('Fucked up error!');
-    }
 
 }

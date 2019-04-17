@@ -3,8 +3,15 @@
 namespace App\Repository;
 
 use App\Entity\Post;
+use App\Entity\Points;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\Query\Expr\GroupBy;
+use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
 
 /**
  * @method Post|null find($id, $lockMode = null, $lockVersion = null)
@@ -52,24 +59,40 @@ class PostRepository extends ServiceEntityRepository
     {
         $now = new \DateTime;
         $now->modify( '-'.(date('j')-1).' day' );
-
-
         return $this->createQueryBuilder('p')
+            ->innerJoin('p.user', 'c')
+            ->innerJoin('p.points', 'pp')
+            ->leftJoin('p.comments', 'cc')
             ->andWhere("p.date > '".$now->format("Y-m-d H:i:s")."'")
-            ->orderBy('p.points', 'DESC')
             ->setMaxResults($max)
+            ->groupBy('pp.post')
+            ->orderBy('pp.post','DESC')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
+    }
 
-//        return $this->createQueryBuilder('od')
-//            ->join('od.order', 'o')
-//            ->addSelect('o')
-//            ->where('o.userid = :userid')
-//            ->andWhere('od.orderstatusid IN (:orderstatusid)')
-//            ->setParameter('userid', $userid)
-//            ->setParameter('orderstatusid', array(5, 6, 7, 8, 10))
-//            ->getQuery()->getResult()
-//        ;
+    public function findByTag($max, string $tag)
+    {
+        $tag = $this->sanitizeSearchQuery($tag);
+        $tag = '#'.$tag;
+        return  $this->createQueryBuilder('p')
+//            ->innerJoin('p.user', 'c')
+//            ->leftJoin('p.points', 'pp')
+//            ->leftJoin('p.comments', 'cc')
+            ->Where('p.content LIKE :tag')
+            ->setParameter('tag','%'.$tag.'%')
+            ->setMaxResults($max)
+            ->orderBy('p.date','DESC')
+            ->getQuery()
+            ->getResult();
+
+    }
+
+    /**
+     * Removes all non-alphanumeric characters except whitespaces.
+     */
+    private function sanitizeSearchQuery(string $query): string
+    {
+        return trim(preg_replace('/[[:space:]]+/', ' ', $query));
     }
 }

@@ -61,7 +61,7 @@ $(document).ready(function() {
             });
     });
     //Avatar
-    var formAvatar = $('#change_avatar');
+/*    var formAvatar = $('#change_avatar');
     formAvatar.submit(function(e){
         e.preventDefault();
         $('#submitAvatar').prop('disabled', 1);
@@ -92,7 +92,7 @@ $(document).ready(function() {
             .always(function() {
                 $('#submitAvatar').prop('disabled',false);
             });
-    });
+    });*/
 
 
 

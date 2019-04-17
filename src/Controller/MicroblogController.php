@@ -34,31 +34,33 @@ use App\Entity\Verification;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-
+/**
+ * @Route("/mb")
+ */
 class MicroblogController extends AbstractController
 {
-    /**
-     * @Route("/mb")
-     */
-    public function mb(Request $request){
+
+    private function microblogEngine(Request $request, $params){
+
+        $return = [];
+
         $postRepo = $this->getDoctrine()->getRepository(Post::class);
         $commentsRepo = $this->getDoctrine()->getRepository(Comments::class);
         $pointsRepo = $this->getDoctrine()->getRepository(Points::class);
         $entityManager = $this->getDoctrine()->getManager();
 
-//NEW POSTS
+        //NEW POSTS
         $addPostForm = $this->createForm(AddPost::class);
         $addPostForm->handleRequest($request);
         if ($addPostForm->isSubmitted() && $addPostForm->isValid()) {
             $formData = $addPostForm->getData();
             $newPost = new Post();
-            $newPost->setUser_id($this->getUser()->getId());
+            $newPost->setUser($this->getUser());
             $newPost->setContent($formData['content']);
             $newPost->setDate(new \DateTime('now'));
-            $newPost->setPoints(0);
             $entityManager->persist($newPost);
             $entityManager->flush();
-            return $this->redirectToRoute('mb_post_id',['slug'=>$newPost->getId()],301);
+            return $this->redirectToRoute('mb_post_id', ['slug' => $newPost->getId()], 301);
         }
 
 //NEW COMMENT
@@ -69,90 +71,91 @@ class MicroblogController extends AbstractController
             $newComment = new Comments();
             $newComment->setContent($formData['content']);
             $newComment->setDate(new \DateTime('now'));
-            $newComment->setPostid($formData['postid']);
-            $newComment->setUser_id($this->getUser()->getId());
-            var_dump($newComment);
+            $newComment->setPost($postRepo->findOneBy(['id' => $formData['postid']]));
+            $newComment->setUser($this->getUser());
+            $newComment->setVisible(null);
+//            var_dump($newComment);
             $entityManager->persist($newComment);
             $entityManager->flush();
             $this->addFlash('success', "Your post has been published.");
         }
 
-        $postsResult = $postRepo->findBy([],['date'=>'desc']);
-        $commentsResultTemp = [];
-        foreach($postsResult as $p){
-//            $commentsResult = $commentsRepo->findBy(['post_id'=> $p->getId()]);
+
+
+//ADD POINT
+        if (is_numeric($request->request->get('addPointToPost'))){
+            $newPoint = new Points();
+            $checkIfPointExistsAlready = $pointsRepo->findOneBy(['post' => $postRepo->findOneBy(['id' => $request->request->get('subtractPointToPost')]),'user'=>$this->getUser()]);
+//            if($checkIfPointExistsAlready !== null){
+//                $this->addFlash("warning",'You have already voted for this');
+//            }else{
+                $newPoint->setPost($postRepo->findOneBy(['id' => htmlentities($request->request->get('addPointToPost'))]));
+                $newPoint->setUser($this->getUser());
+                $entityManager->persist($newPoint);
+                $entityManager->flush();
+//            }
         }
+//SUBTRACT POINT
+        if (is_numeric($request->request->get('subtractPointToPost'))) {
+
+            $remove = $pointsRepo->findOneBy(['post' => $postRepo->findOneBy(['id' => $request->request->get('subtractPointToPost')]),'user'=>$this->getUser()]);
+            $entityManager->remove($remove);
+            $entityManager->flush();
+        }
+
+        if($params['type']=="latest"){
+            $postsResult = $postRepo->findBy([], ['date' => 'desc']);
+        }elseif($params['type']=="onePost"){
+            $params['slug'] = htmlspecialchars($params['slug'], ENT_COMPAT | ENT_HTML5);
+            $postsResult = $postRepo->findBy(['id'=>$params['slug']]);
+        }elseif($params['type']=="tag") {
+            $params['slug'] = htmlspecialchars($params['slug'], ENT_COMPAT | ENT_HTML5);
+            $postsResult = $postRepo->findByTag(20, $params['slug']);
+        }
+
+
+
+
         $posts = [];
         $comments = [];
 
-        //POINTS
-        if(is_numeric($request->request->get('addPointToPost'))) {
-            $newPoint = new Points();
-            $newPoint->setPost_Id($request->request->get('addPointToPost'));
-            $newPoint->setUserId($this->getUser()->getId());
-            $changePoints = $postRepo->findOneBy(['id'=>$request->request->get('addPointToPost')]);
-            $changePoints->addOnePoint();
-            $entityManager->persist($newPoint);
-            $entityManager->persist($changePoints);
-            $entityManager->flush();
-        }
-        if(is_numeric($request->request->get('subtractPointToPost'))){
-            $remove = $pointsRepo->findOneBy(['post_Id'=>$request->request->get('subtractPointToPost')]);
-            $changePoints = $postRepo->findOneBy(['id'=>$request->request->get('subtractPointToPost')]);
-            $changePoints->subtractOnePoint();
-            $entityManager->remove($remove);
-            $entityManager->persist($changePoints);
-            $entityManager->flush();
-        }
-
         foreach ($postsResult as $post) {
-            $comments = $commentsRepo->findBy(['postid'=>$post->getId()],['date'=>'asc']);
-            if($this->getUser()) {
-//                var_dump($post->getId());
-                $isPointAdded = $pointsRepo->findOneBy([
 
+            if ($this->getUser()) {
 
-                    'post_Id' => $post->getId(),
-//                    'post_Id' => 0,
+                $addedPoint = false;
+                /* $isPointAdded = $pointsRepo->findOneBy([
+                     'post' => $post,
+                     'user' => $this->getUser()
+                 ]);
+                 if ($isPointAdded) {
+                     $addedPoint = true;
+                 } else {
+                     $addedPoint = false;
+                 }*/
+                if(!empty($post->getPoints())) {
+                    foreach ($post->getPoints() as $sub_p) {
 
-                    'UserId' => $this->getUser()->getId()
-//                    'UserId' => 0
-                ]);
-                if($isPointAdded){
-                    $addedPoint = true;
+                        if ($sub_p->getUser() === $this->getUser()) {
+                            $addedPoint = true;
+//                           var_dump($addedPoint);
+                        } else {
+                            $addedPoint = false;
+                        }
+                    }
                 }else{
                     $addedPoint = false;
+
+                    var_dump($addedPoint);
                 }
-            }else{
+
+
+            } else {
                 $addedPoint = false;
             }
-//            if($isPointAdded){
-//                $addedPoint = true;
-//            }else{
-//                $addedPoint = false;
-//            }
-            $comments2 = [];
-            foreach ($comments as $comment) {
-                $comments2[] = [
-                    'userid' => htmlspecialchars($comment->getUser_id(), ENT_COMPAT | ENT_HTML5),
-                    'date' => htmlspecialchars($this->time_elapsed_string($comment->getDate()), ENT_COMPAT | ENT_HTML5),
-                    'content' => htmlspecialchars($comment->getContent(), ENT_COMPAT | ENT_HTML5),
-//                    'username' => htmlspecialchars($usersRepo->findOneBy(['id'=>$comment->getUserid()])->getUsername(), ENT_COMPAT | ENT_HTML5),
-                    var_dump($comment->getUser()->getUsername()),
-//                    var_dump($comment->getUser()->getUsername()),
-//                    var_dump($comment->getUser()),
-//                    var_dump($comment->getUser()),
-//                    'username' => htmlspecialchars($comment->getUser()->getUsername(), ENT_COMPAT | ENT_HTML5),
-                    'username' => 'zaq123',
-                    'avatar' => htmlspecialchars($comment->getUser()->getAvatar(), ENT_COMPAT | ENT_HTML5),
-                    'roles' => $comment->getUser()->getRoles(),
-                    'postid' => htmlspecialchars($comment->getPostid(), ENT_COMPAT | ENT_HTML5),
-                    'visible' => htmlspecialchars($comment->getVisible(), ENT_COMPAT | ENT_HTML5),
-                    'id' => htmlspecialchars($comment->getId(), ENT_COMPAT | ENT_HTML5),
-                ];
-            }
+
             $posts[] = [
-                'userid' => htmlspecialchars($post->getUser_id(), ENT_COMPAT | ENT_HTML5),
+                'userid' => $post->getUser()->getId(),
                 'date' => htmlspecialchars($this->time_elapsed_string($post->getDate()), ENT_COMPAT | ENT_HTML5),
                 'content' => htmlspecialchars($post->getContent(), ENT_COMPAT | ENT_HTML5),
                 'username' => htmlspecialchars($post->getUser()->getUsername(), ENT_COMPAT | ENT_HTML5),
@@ -160,147 +163,172 @@ class MicroblogController extends AbstractController
 //                'roles' => $usersRepo->findOneBy(['id'=>$post->getUser_id()])->getRoles(),
                 'roles' => $post->getUser()->getRoles(),
                 'id' => htmlspecialchars($post->getId(), ENT_COMPAT | ENT_HTML5),
-                'points' => htmlspecialchars($post->getPoints(), ENT_COMPAT | ENT_HTML5),
-                'addedPoint'=> $addedPoint,
-                'comments' => $comments2
-            ];
-        }
-
-        $hotPosts = $postRepo->findByHot24h();
-
-
-
-/*            echo "<pre>";
-            var_dump($posts);
-            var_dump($comments);
-            var_dump($commentsResult);
-            echo "</pre>";*/
-
-            return $this->render('mb/mb.html.twig', [
-                'posts' => $posts,
-                'comments' => $comments,
-                'hotPosts' => $hotPosts,
-                'addPostForm' => $addPostForm->createView(),
-                'addCommentsForm' => $addCommentForm->createView(),
-            ]);
-    }
-
-//    /**
-//     * @Route("/mb/post/{slug}", name="mb_post_id")
-//     */
-//    public function mb_post(Request $request, $slug){
-        /*$postsRepo = $this->getDoctrine()->getRepository(Post::class);
-        $commentsRepo = $this->getDoctrine()->getRepository(Comments::class);
-        $pointsRepo = $this->getDoctrine()->getRepository(Points::class);
-        $usersRepo = $this->getDoctrine()->getRepository(User::class);
-
-
-        $addPostForm = $this->createForm(AddPost::class);
-        $addPostForm->handleRequest($request);
-
-        $addCommentForm = $this->createForm(AddComment::class);
-        $addCommentForm->handleRequest($request);
-
-        if ($addCommentForm->isSubmitted() && $addCommentForm->isValid()) {
-            $formData = $addCommentForm->getData();
-            $newComment = new Comments();
-            $newComment->setUserid($this->getUser()->getId());
-            $newComment->setContent($formData['content']);
-            $newComment->setDate(new \DateTime('now'));
-            $newComment->setPostid($formData['postid']);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($newComment);
-            $entityManager->flush();
-            $this->addFlash('success', "Your post has been published.");
-        }
-
-        $postsResult = $postsRepo->findBy(['id'=>htmlspecialchars($slug, ENT_COMPAT | ENT_HTML5),],['date'=>'desc']);
-        $commentsResultTemp = [];
-        foreach($postsResult as $p){
-            $commentsResult = $commentsRepo->findBy(['postid'=> $p->getId()]);
-            $addedPoint = $pointsRepo->findBy(['postId'=>$p->getId()],['userId'=>$this->getUser()->getId()]);
-        }
-        $posts = [];
-        $comments = [];
-
-        foreach ($postsResult as $post) {
-            $comments = $commentsRepo->findBy(['postid'=>$post->getId()],['date'=>'asc']);
-            $comments2 = [];
-            foreach ($comments as $comment) {
-                $comments2[] = [
-                    'userid' => htmlspecialchars($comment->getUserid(), ENT_COMPAT | ENT_HTML5),
-                    'date' => htmlspecialchars($this->time_elapsed_string($comment->getDate()), ENT_COMPAT | ENT_HTML5),
-                    'content' => htmlspecialchars($comment->getContent(), ENT_COMPAT | ENT_HTML5),
-                    'username' => htmlspecialchars($usersRepo->findOneBy(['id'=>$comment->getUserid()])->getUsername(), ENT_COMPAT | ENT_HTML5),
-                    'avatar' => htmlspecialchars($usersRepo->findOneBy(['id'=>$comment->getUserid()])->getAvatar(), ENT_COMPAT | ENT_HTML5),
-                    'roles' => $usersRepo->findOneBy(['id'=>$comment->getUserid()])->getRoles(),
-                    'postid' => htmlspecialchars($comment->getPostid(), ENT_COMPAT | ENT_HTML5),
-                    'visible' => htmlspecialchars($comment->getVisible(), ENT_COMPAT | ENT_HTML5),
-                    'id' => htmlspecialchars($comment->getId(), ENT_COMPAT | ENT_HTML5),
-                ];
-            }
-            $posts[] = [
-                'userid' => htmlspecialchars($post->getUserid(), ENT_COMPAT | ENT_HTML5),
-                'date' => htmlspecialchars($this->time_elapsed_string($post->getDate()), ENT_COMPAT | ENT_HTML5),
-                'content' => htmlspecialchars($post->getContent(), ENT_COMPAT | ENT_HTML5),
-                'username' => htmlspecialchars($usersRepo->findOneBy(['id'=>$post->getUserid()])->getUsername(), ENT_COMPAT | ENT_HTML5),
-                'avatar' => htmlspecialchars($usersRepo->findOneBy(['id'=>$post->getUserid()])->getAvatar(), ENT_COMPAT | ENT_HTML5),
-                'roles' => $usersRepo->findOneBy(['id'=>$post->getUserid()])->getRoles(),
-                'id' => htmlspecialchars($post->getId(), ENT_COMPAT | ENT_HTML5),
-                'points' => htmlspecialchars($post->getPoints(), ENT_COMPAT | ENT_HTML5),
-                'comments' => $comments2
-
+                'points' => count($post->getPoints()),
+                'addedPoint' => $addedPoint,
+//                'comments' => $comments2
+                'comments' => $post->getComments()
 
             ];
         }
-        /*            echo "<pre>";
-                    var_dump($posts);
-                    var_dump($comments);
-                    var_dump($commentsResult);
-                    echo "</pre>";*/
-        /*
-        return $this->render('mb/mb.html.twig', [
+        $hotPosts = $postRepo->findByHot24h(10);
+//        $hotPosts = $postRepo->findBy(['date'=>'DESC']);
+//        $hotPosts = [];
+        $tags = [
+            'programming',
+            'lifestyle',
+            'shit',
+            'ask',
+            'lorem',
+            'ipsum',
+            'color',
+            'sit',
+            'damet',
+            'etcetera',
+            'Suspendisse',
+            'ornare',
+            'luctus',
+            'dolor',
+            'sed',
+            'finibus',
+            'sapien',
+            'cursus',
+            'eu',
+            'programming',
+            'lifestyle',
+            'shit',
+            'ask',
+            'lorem',
+            'ipsum',
+            'color',
+            'sit',
+            'damet',
+            'etcetera',
+            'Suspendisse',
+            'ornare',
+            'luctus',
+            'dolor',
+            'sed',
+            'finibus',
+            'sapien',
+            'cursus',
+            'eu'
+        ];
+
+
+
+        $return = [
             'posts' => $posts,
             'comments' => $comments,
-//            'addPostForm' => $addPostForm->createView(),
+            'tags' => $tags,
+            'hotPosts' => $hotPosts,
             'addCommentsForm' => $addCommentForm->createView(),
-        ]);*/
-//        return new Response('In construction');
-//    }
+            'addPostForm' => $addPostForm->createView(),
+            'generateNewPost' => true,
+        ];
+        if($params['generateNewPost']==true) {
+            $return['generateNewPost'] = true;
+        }else{
+            $return['generateNewPost'] = false;
+        }
+        return $return;
+    }
 
     /**
-     * @Route("/mb/post/deletecom")
+     * @Route("/", name="mb_all")
      */
-    public function deletecom(Request $request){
-        if(($this->isGranted('ROLE_MOD'))||($this->isGranted('ROLE_ADMIN'))){
-            if(($request->request->get('commentid'))||$request->query->get('commentid')){
+    public function mb(Request $request)
+    {
+        $params = [
+            'type'=>'latest',
+            'slug'=>null,
+            'generateNewPost'=>true,
+        ];
+        $returnedFromEngine = $this->microblogEngine($request, $params);
+
+//        var_dump($returnedFromEngine);
+        return $this->render('mb/mb.html.twig', $returnedFromEngine);
+    }
+
+    /**
+     * @Route("/post", name="mb_post_without_slug")
+     */
+    public function post()
+    {
+        return $this->redirectToRoute('mb_all');
+    }
+
+    /**
+     * @Route("/post/{slug}", name="mb_post_id")
+     */
+    public function mb_post(Request $request, $slug)
+    {
+        $params = [
+            'type'=>'onePost',
+            'slug'=>$slug,
+            'generateNewPost'=>false,
+        ];
+        $returnedFromEngine = $this->microblogEngine($request, $params);
+
+//        var_dump($returnedFromEngine);
+
+        return $this->render('mb/mb.html.twig', $returnedFromEngine);
+    }
+
+    /**
+     * @Route("/tag", name="mb_tag_without_slug")
+     */
+    public function tag()
+    {
+        return $this->redirectToRoute('mb_all');
+    }
+
+    /**
+     * @Route("/tag/{slug}", name="mb_tag")
+     */
+    public function tag_list(Request $request, $slug)
+    {
+        $params = [
+            'type'=>'tag',
+            'slug'=>$slug,
+            'generateNewPost'=>true,
+        ];
+        $returnedFromEngine = $this->microblogEngine($request, $params);
+        return $this->render('mb/mb.html.twig', $returnedFromEngine);
+    }
+
+    /**
+     * @Route("/post/deletecom")
+     */
+    public function deletecom(Request $request)
+    {
+        if (($this->isGranted('ROLE_MOD')) || ($this->isGranted('ROLE_ADMIN'))) {
+            if (($request->request->get('commentid')) || $request->query->get('commentid')) {
                 $commentid = $request->request->get('commentid');
                 $commentid = $request->query->get('commentid');
                 $commentsRepo = $this->getDoctrine()->getRepository(Comments::class);
 
-                $found = $commentsRepo->findOneBy(['id'=>$commentid]);
+                $found = $commentsRepo->findOneBy(['id' => $commentid]);
 
-                if($found)
-                {
+                if ($found) {
                     $entityManager = $this->getDoctrine()->getManager();
-                    if($found->getVisible()===null){
+                    if ($found->getVisible() === null) {
                         $found->setVisible(0);
                         $madeinvisibled = 1;
-                    }else{
+                    } else {
                         $found->setVisible(null);
                         $madeinvisibled = 0;
                     }
                     $entityManager->persist($found);
                     $entityManager->flush();
-                }else{
-                    return new JsonResponse(['status'=>'failed','why'=>'commentid not found in db']);
+                } else {
+                    return new JsonResponse(['status' => 'failed', 'why' => 'commentid not found in db']);
                 }
-                return new JsonResponse(['status'=>'success','why'=>'removed comment with id '.$commentid, 'commentid'=>$commentid, 'madeinvisible'=>$madeinvisibled]);
-            }else {
-                return new JsonResponse(['status'=>'failed','why'=>'commentid in post method no exists']);
+                return new JsonResponse(['status' => 'success', 'why' => 'removed comment with id ' . $commentid, 'commentid' => $commentid, 'madeinvisible' => $madeinvisibled]);
+            } else {
+                return new JsonResponse(['status' => 'failed', 'why' => 'commentid in post method no exists']);
             }
-        }else{
-            return new JsonResponse(['status'=>'failed','why'=>'permission']);
+        } else {
+            return new JsonResponse(['status' => 'failed', 'why' => 'permission']);
         }
 
     }
@@ -308,7 +336,8 @@ class MicroblogController extends AbstractController
     /**
      * @Assert\DateTime()
      */
-    public function time_elapsed_string($datetime, $full = false) {
+    public function time_elapsed_string($datetime, $full = false)
+    {
         $now = new \DateTime('now');
         $ago = new \DateTime($datetime->format('Y-m-d H:i:s'));
         $diff = $now->diff($ago);
@@ -335,5 +364,59 @@ class MicroblogController extends AbstractController
 
         if (!$full) $string = array_slice($string, 0, 1);
         return $string ? implode(', ', $string) . ' ago' : 'just now';
+    }
+
+    /**
+     * @Route("/mod/")
+     */
+    public function mod(Request $request)
+    {
+        $postRepo = $this->getDoctrine()->getRepository(Post::class);
+        $commentsRepo = $this->getDoctrine()->getRepository(Comments::class);
+        $pointsRepo = $this->getDoctrine()->getRepository(Points::class);
+        $entityManager = $this->getDoctrine()->getManager();
+        if ($request->query->get('action')) {
+
+            $action = $request->query->get('action');
+            $action = htmlentities($action);
+            if (is_numeric($action)) {
+                switch ($action) {
+                    case 1:
+                        $ok = ['info' => "Id $action is for permanent removal (comments)"];
+                        $post_id = htmlentities($request->query->get('post_id'));
+                        if (is_numeric($post_id)) {
+                            $obj = $postRepo->findOneBy(['id' => $post_id]);
+                            $entityManager->persist($obj);
+                            $entityManager->flush();
+                        }else{
+                            $ok[]=['error'=>"$post_id \$post_id is not numeric!"];
+                        }
+                        break;
+                    case 2:
+                        echo "Your favorite color is blue!";
+                        break;
+                    case 3:
+                        echo "Your favorite color is green!";
+                        break;
+                    case 4:
+                        echo "Your favorite color is red!";
+                        break;
+                    case 5:
+                        echo "Your favorite color is blue!";
+                        break;
+                    case 6:
+                        echo "Your favorite color is green!";
+                        break;
+                    default:
+                        $ok = ['error' => "The action with id $action is not recognized."];
+                }
+            } else {
+                $ok = ['error' => "The string $action does not consist of all letters or digits."];
+            }
+
+            return new JsonResponse(json_encode($ok));
+        } else {
+            return new JsonResponse(json_encode(['error' => "The parameter action is missing."]));
+        }
     }
 }

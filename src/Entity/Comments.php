@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CommentsRepository")
@@ -17,23 +18,25 @@ class Comments
     private $id;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $user_id;
-
-    /**
-     * @var Post
-     * @ORM\ManyToOne(targetEntity="Comments", inversedBy="post",  fetch="EAGER")
+     * @var post
+     * @ORM\ManyToOne(targetEntity="Post", inversedBy="comments",  fetch="EAGER")
      */
     private $post;
 
+//    /**
+//     * @ORM\Column(type="integer", nullable=true)
+//     */
+//    private $user_id;
 
-    public function getPost(): User {
-        return $this->user;
+
+
+
+    public function getPost(): Post {
+        return $this->post;
     }
 
-    public function setPost(User $user) {
-        $this->user = $user;
+    public function setPost(Post $post) {
+        $this->post = $post;
     }
 
     /**
@@ -50,6 +53,20 @@ class Comments
         $this->user = $user;
     }
 
+
+    /**
+     * @var Points
+     * @ORM\OneToMany(targetEntity="Points", mappedBy="comments", fetch="EAGER")
+     */
+    private $points;
+
+    /**
+     * @return Collection|Points[]
+     */
+    public function getPoints(): Collection {
+        return $this->points;
+    }
+
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -60,10 +77,10 @@ class Comments
      */
     private $date;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $postid;
+//    /**
+//     * @ORM\Column(type="integer")
+//     */
+//    private $postid;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
@@ -109,18 +126,18 @@ class Comments
 
         return $this;
     }
-
-    public function getPostid(): ?int
-    {
-        return $this->postid;
-    }
-
-    public function setPostid(int $postid): self
-    {
-        $this->postid = $postid;
-
-        return $this;
-    }
+//
+//    public function getPostid(): ?int
+//    {
+//        return $this->postid;
+//    }
+//
+//    public function setPostid(int $postid): self
+//    {
+//        $this->postid = $postid;
+//
+//        return $this;
+//    }
 
     public function getVisible(): ?int
     {

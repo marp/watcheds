@@ -63,7 +63,8 @@
                 });
 
         });
-        let apikey = '3ffbff40';
+        // let apikey = '3ffbff40';
+            let apikey = '{{ omdbapikey }}';
 
         let tconst = $("#series_tconst").html();
         let url =  "https://www.omdbapi.com/?i="+tconst+"&apikey="+apikey;
@@ -227,10 +228,12 @@
             $(button).prop('disabled', true);
             $.ajax({
                 url: '/ajax',
-                type: "POST",
+                // url: window.location.href,
+                type: "GET",
                 dataType: "json",
                 data: {
-                    "tconst": button.value
+                    "tconst": button.value,
+                    "submit": button.value
                 },
                 async: true,
                 success: function (data) {
@@ -249,9 +252,10 @@
 
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    alert(textStatus);
-                    alert(jqXHR);
-                    alert(errorThrown);
+                    alert("Error!");
+                    console.log(textStatus);
+                    console.log(jqXHR);
+                    console.log(errorThrown);
                 }
             })
                 .always(function () {

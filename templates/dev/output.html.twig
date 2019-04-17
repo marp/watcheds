@@ -3,8 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        table {
+            font-size: 1em;
+        }
+
+        .ui-draggable, .ui-droppable {
+            background-position: top;
+        }
+
+        .spinner {
+            background-color: #fff;
+            background-image: url({{ asset('img/spinner.gif') }});
+            background-size: 25px 25px;
+            background-position:right center;
+            background-repeat: no-repeat;
+        }
+    </style>
+    {#<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">#}
+    <link rel="stylesheet" href="{{ asset('jqueryui/jquery-ui.min.css') }}">
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    {#<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>#}
+    <script src="{{ asset('jqueryui/jquery-ui.min.js') }}"></script>
 </head>
 <body>
     {{ output }}
+    <div class="ui-widget">
+        <label for="tags">Tags: </label>
+        <input id="tags" class="suggest-user">
+    </div>
+    <script>
+        let inputAC = $("#tags");
+        let url = '/dev/search?s=';
+        $(inputAC).autocomplete({
+                source: function (request, response) {
+                    $(inputAC).addClass('spinner');
+                    $.ajax({
+                        dataType: "json",
+                        type: 'Get',
+                        url: url + request.term,
+                        success: function (data) {
+                            $(inputAC).removeClass('spinner');
+                            response(JSON.parse(data));
+                        },
+                        error: function (data) {
+                            $(inputAC).removeClass('spinner');
+                        }
+                    });
+                },
+                search: function (event, ui) {
+                    $(inputAC).addClass('spinner');
+                },
+                response: function (event, ui) {
+                    $(inputAC).removeClass('spinner');
+                },
+            },
+        );
+    </script>
 </body>
 </html>
+
+
+

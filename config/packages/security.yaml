@@ -41,8 +41,8 @@ security:
          - { path: ^/admin, roles: ROLE_ADMIN }
 #         - { path: ^/profile/{slug}, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/profile$, roles: IS_AUTHENTICATED_REMEMBERED }
-#         - { path: ^/s/, roles: ROLE_USER }
          - { path: ^/profile, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/mb/mod, roles: ROLE_MOD }
 
 #  encoders:
 #    Symfony\Component\Security\Core\User\User:

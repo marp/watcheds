@@ -6,6 +6,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Repository\UserRepository;
+//use Elastica\Search;
+
+//use Symfony\Component\Serializer\Annotation\Groups;
+
+
+//@Search(repositoryClass="AppBundle\SearchRepository\UserRepository")
 
 /**
  * @UniqueEntity(fields="email", message="Email already taken")
@@ -23,13 +29,13 @@ class User implements UserInterface
 
     /**
      * @var Post
-     * @ORM\OneToMany(targetEntity="Post", mappedBy="id")
+     * @ORM\OneToMany(targetEntity="Post", mappedBy="user")
      */
     private $post;
 
     /**
      * @var Points
-     * @ORM\OneToMany(targetEntity="Points", mappedBy="id")
+     * @ORM\OneToMany(targetEntity="Points", mappedBy="user")
      */
     private $points;
 
@@ -62,6 +68,8 @@ class User implements UserInterface
      * )
      */
     private $username;
+//* @Groups({"elastica"})
+//* @var string
 
     /**
      * @Assert\NotBlank()

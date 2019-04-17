@@ -189,24 +189,34 @@ class UserController extends AbstractController
             $file = $formAvatar->getData();
             $file = $file['avatar'];
             $fileName = $this->generateUniqueFileName().'.'.$file->guessExtension();
-            try {
-                $file->move(
-                    $this->getParameter('avatars_directory'),
-                    $fileName
-                );
-                $fileSystem = new Filesystem();
+            $fileMimeType = $file->getMimeType();
+//            check if it is image
+            $imageMimeTypes = array(
+                'image/png',
+                'image/gif',
+                'image/jpeg');
+            if (in_array($fileMimeType, $imageMimeTypes)) {
                 try {
-                    $fileSystem->remove($this->getParameter('avatars_directory')."/".$user->getAvatar());
-                } catch (IOExceptionInterface $exception) {
-                    echo "An error occurred while removing file! ";
+                    $file->move(
+                        $this->getParameter('avatars_directory'),
+                        $fileName
+                    );
+                    $fileSystem = new Filesystem();
+                    try {
+                        $fileSystem->remove($this->getParameter('avatars_directory')."/".$user->getAvatar());
+                    } catch (IOExceptionInterface $exception) {
+                        echo "An error occurred while removing file! ";
+                    }
+                } catch (FileException $e) {
+                    $this->addFlash('danger', "Error");
                 }
-            } catch (FileException $e) {
-                $this->addFlash('danger', "Error");
+                $user->setAvatar($fileName);
+                $entityManager->persist($user);
+                $entityManager->flush();
+                $this->addFlash('success', "Your avatar has been successfully changed");
+            }else{
+                $this->addFlash('danger',"It isn't image. Check file extension.");
             }
-            $user->setAvatar($fileName);
-            $entityManager->persist($user);
-            $entityManager->flush();
-            $this->addFlash('success', "Your avatar has been successfully changed");
         }
 
         $formDescription = $this->createForm(ChangeDescriptionType::class);

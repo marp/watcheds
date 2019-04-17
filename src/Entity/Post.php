@@ -3,8 +3,9 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Persisters\Collection;
-
+//use Doctrine\ORM\Persisters\Collection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
  */
@@ -16,11 +17,6 @@ class Post
      * @ORM\Column(type="integer")
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $user_id;
 
     /**
      * @var User
@@ -35,6 +31,47 @@ class Post
     public function setUser(User $user) {
         $this->user = $user;
     }
+//
+//    /**
+//     * Add user
+//     *
+//     * @param \App\Entity\User $user
+//     *
+//     * @return Post
+//     */
+//    public function addUser(User $user)
+//    {
+//        $this->user[] = $user;
+//
+//        return $this;
+//    }
+
+    /**
+     * @var Comments
+     * @ORM\OneToMany(targetEntity="Comments", mappedBy="post", fetch="EAGER")
+     */
+    private $comments;
+
+    /**
+     * @return Collection|Comments[]
+     */
+    public function getComments(): Collection {
+        return $this->comments;
+    }
+
+    /**
+     * @var Points
+     * @ORM\OneToMany(targetEntity="Points", mappedBy="post", fetch="EAGER")
+     */
+    private $points;
+
+    /**
+     * @return Collection|Points[]
+     */
+    public function getPoints(): Collection {
+        return $this->points;
+    }
+
 
 //    /**
 //     * @var Post
@@ -42,16 +79,11 @@ class Post
 //     */
 //    private $post;
 
-//    /**
-//     * @return Collection|Comments[]
-//     */
-//    public function getComments(): Collection {
-//        return $this->comments;
-//    }
+
 
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=9000, nullable=true)
      */
     private $content;
 
@@ -60,27 +92,11 @@ class Post
      */
     private $date;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $points;
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUser_id(): ?int
-    {
-        return $this->user_id;
-    }
-
-    public function setUser_id(int $user_id): self
-    {
-        $this->user_id = $user_id;
-
-        return $this;
-    }
 
     public function getContent(): ?string
     {
@@ -106,29 +122,4 @@ class Post
         return $this;
     }
 
-    public function getPoints(): ?int
-    {
-        return $this->points;
-    }
-
-    public function setPoints(?int $points): self
-    {
-        $this->points = $points;
-
-        return $this;
-    }
-
-    public function addOnePoint(): self
-    {
-        $this->points++;
-
-        return $this;
-    }
-
-    public function subtractOnePoint(): self
-    {
-        $this->points--;
-
-        return $this;
-    }
 }

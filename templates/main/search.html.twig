@@ -15,7 +15,7 @@
         <div class="col-12 col-sm-7">
             <form method="get" action="\search">
                 <div class="input-group md-form form-sm form-2 pl-0">
-                    <input class="form-control form-control-lg my-0 py-1 red-border" type="text" name="s" value="{{ slug }}" placeholder="Season..." aria-label="Search">
+                    <input class="form-control form-control-lg my-0 py-1 red-border autocompleteSeries" type="text" name="s" value="{{ slug }}" placeholder="..." aria-label="Search">
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-primary input-group-text"><i class="fas fa-search"></i>  Search</button>
                     </div>
@@ -263,7 +263,7 @@
 
         $(document).ready(function() {
 
-        let apikey = '3ffbff40';
+        let apikey = '{{ omdbapikey }}';
             $(".posters").get().forEach(function(entry, index, array) {
                 let tconst = $(entry).attr('id');
                 let url =  "https://www.omdbapi.com/?i="+tconst+"&apikey="+apikey;

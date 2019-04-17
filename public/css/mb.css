@@ -134,3 +134,12 @@ body{
 .hover-underline:hover{
     text-decoration: underline;
 }
+
+.pre{
+    font-family: Courier New, Courier, Lucida Sans Typewriter, Lucida Typewriter, monospace;
+    font-size: 13px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 18.5667px;
+}
