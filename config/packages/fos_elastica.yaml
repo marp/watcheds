@@ -1,0 +1,67 @@
+# Read the documentation: https://github.com/FriendsOfSymfony/FOSElasticaBundle/blob/master/Resources/doc/setup.md
+fos_elastica:
+#  serializer: ~
+  clients:
+    default: { host: localhost, port: 9200 }
+  #    indexes:
+  #        app: ~
+  indexes:
+    app:
+      client: default
+        #FOR AUTOCOMPLETE
+        settings:
+          index:
+            analysis:
+              analyzer:
+                name_analyzer:
+                  type: custom
+                  tokenizer: standard
+                  filter: [standard, lowercase, asciifolding, elision]
+      #END FOR AUTOCOMPLETE
+      types:
+        user:
+#          serializer:
+#            groups: [elastica]
+          properties:
+#            username: ~
+#            visibility: ~
+            username:
+              type: completion
+#              analyzer: name_analyzer
+#              search_analyzer: name_analyzer
+          #                        username:
+          #                        name_suggest:
+          #                                              MAPPINGS ADDED FOR AUTOCOMPLETE
+          #                            type: completion
+          #                            analyzer: name_analyzer
+          #                            search_analyzer: name_analyzer
+          #                            payloads: true
+          #                        id:
+          #                            type: keyword
+          #                        username:
+          #                            type: keyword
+
+          #MAPPINGS ADDED FOR AUTOCOMPLETE
+          persistence:
+            # the driver can be orm, mongodb, phpcr or propel
+            # listener and finder are not supported by
+            # propel and should be removed
+            driver: orm
+            model: App\Entity\User
+            provider: ~
+            listener: ~
+            finder: ~
+#                        repository: App\Repository\UserRepository
+
+    titles:
+        index_name: titles_autocomplete
+        types:
+          titles:
+            properties:
+              primarytitle: ~
+            persistence:
+              driver: orm
+              model: App\Entity\Titles
+              provider: ~
+              listener: ~
+              finder: ~
