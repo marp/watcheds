@@ -1,6 +1,6 @@
-# SymfonyTemplate
+# Watcheds
 
-This project helps making new websites based on symfony 4.
+This website make you able to mark watched episodes of tv series.
 
 ## Getting Started
 
